@@ -9,13 +9,13 @@
               <type value="RUNNING_DEVICE_TARGET" />
               <deviceKey>
                 <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\Woopee\.android\avd\Medium_Phone_API_28.avd" />
+                  <type value="SERIAL_NUMBER" />
+                  <value value="192.168.0.158:38029" />
                 </Key>
               </deviceKey>
             </Target>
           </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-04-29T05:46:01.370640100Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-05-04T04:42:12.838351700Z" />
         </State>
       </entry>
     </value>

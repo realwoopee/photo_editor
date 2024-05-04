@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.compiler)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     debugImplementation(libs.androidx.ui.tooling)
 
     implementation(libs.androidx.core.ktx)
@@ -61,4 +62,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation("androidx.compose.material:material-icons-extended")
+
+    implementation(libs.speed.dial.compose)
 }
