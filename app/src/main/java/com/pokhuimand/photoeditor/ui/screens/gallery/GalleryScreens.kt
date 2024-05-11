@@ -1,8 +1,6 @@
-package com.pokhuimand.photoeditor.screens.main
+package com.pokhuimand.photoeditor.ui.screens.gallery
 
-import android.content.Context
 import android.content.pm.PackageManager
-import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -29,7 +27,6 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,41 +35,46 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.leinardi.android.speeddial.compose.BuildConfig
 import com.leinardi.android.speeddial.compose.SpeedDial
 import com.leinardi.android.speeddial.compose.SpeedDialOverlay
 import com.leinardi.android.speeddial.compose.SpeedDialState
-import java.io.File
-import java.util.Objects
-import java.util.UUID
+
+@Composable
+fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Photo Editor"
+                    )
+                },
+            )
+        }) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .clickable { onImportPhoto() },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Press anywhere to add photos")
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
-fun MainView(mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory)) {
-    val state: MainViewState by mainViewModel.state.collectAsState()
-
-    val context = LocalContext.current
-
-    val deviceHasCamera = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
-
+fun GalleryPhotosScreen(
+    uiState: GalleryUiState.HasPhotos,
+    deviceHasCamera: Boolean,
+    onImportPhoto: () -> Unit,
+    onSelectedDelete: () -> Unit,
+    onPhotoLongPress: (photoId: String) -> Unit,
+    onPhotoShortPress: (photoId: String) -> Unit
+) {
     var speedDialState by rememberSaveable { mutableStateOf(SpeedDialState.Collapsed) }
-
-    val pickMedia =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null)
-                mainViewModel.importPhoto(uri)
-        }
-
-    val importPhoto = {
-        pickMedia.launch(
-            PickVisualMediaRequest(
-                ActivityResultContracts.PickVisualMedia.ImageOnly
-            )
-        )
-    };
-
 
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
@@ -86,16 +88,19 @@ fun MainView(mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Fa
             )
         },
         floatingActionButton = {
-            AnimatedContent(targetState = state, label = "main_view_fab") { targetState ->
-                if (targetState.selectedPhotos.any())
-                    FloatingActionButton(
-                        onClick = { mainViewModel.onSelectedDelete() },
+            AnimatedContent(
+                targetState = uiState.toFabState(deviceHasCamera),
+                label = "main_view_fab"
+            ) {
+                when (it) {
+                    is GalleryPhotosFabState.PhotosSelected -> FloatingActionButton(
+                        onClick = { onSelectedDelete() },
                         //modifier = Modifier.animateEnterExit(enter = fadeIn(), exit = fadeOut())
                     ) {
                         Icon(Icons.Default.DeleteForever, null)
                     }
-                else if (targetState.photos.any())
-                    SpeedDial(
+
+                    is GalleryPhotosFabState.ImportAvailable -> SpeedDial(
                         state = speedDialState,
                         onFabClick = { expanded ->
                             speedDialState =
@@ -109,7 +114,7 @@ fun MainView(mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Fa
                             FloatingActionButton(
                                 onClick = {
                                     speedDialState = SpeedDialState.Collapsed
-                                    importPhoto()
+                                    onImportPhoto()
                                 },
                             ) {
                                 Icon(Icons.Default.PhotoLibrary, null)
@@ -127,48 +132,40 @@ fun MainView(mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Fa
                                 }
                             }
                     }
+                }
+
             }
         }) { innerPadding ->
-        if (state.photos.isEmpty())
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .clickable { importPhoto() },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Press anywhere to add photos")
-            }
-        else {
-            val interactionSource = remember { MutableInteractionSource() }
 
-            PhotoGrid(
-                photos = state.photos,
-                selectedPhotos = state.selectedPhotos,
-                onPhotoShortPress = { mainViewModel.onPhotoShortPress(it) },
-                onPhotoLongPress = { mainViewModel.onPhotoLongPress(it) },
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .wrapContentSize()
-            )
-            SpeedDialOverlay(
-                visible = speedDialState == SpeedDialState.Expanded,
-                onClick = { },
-                modifier = Modifier.clickable(
-                    interactionSource = interactionSource,
-                    indication = null
-                ) { speedDialState = speedDialState.toggle() }
-            )
-        }
+        val interactionSource = remember { MutableInteractionSource() }
+
+        PhotoGrid(
+            photos = uiState.photos,
+            selectedPhotos = uiState.selectedPhotos,
+            onPhotoShortPress = { onPhotoShortPress(it) },
+            onPhotoLongPress = { onPhotoLongPress(it) },
+            modifier = Modifier
+                .padding(innerPadding)
+                .wrapContentSize()
+        )
+        SpeedDialOverlay(
+            visible = speedDialState == SpeedDialState.Expanded,
+            onClick = { },
+            modifier = Modifier.clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { speedDialState = speedDialState.toggle() }
+        )
     }
 }
 
-fun Context.createImageFile(): File {
-    // Create an image file name
-    val imageFileName = "JPEG_" + UUID.randomUUID() + "_"
-    return File.createTempFile(
-        imageFileName, /* prefix */
-        ".jpg", /* suffix */
-        externalCacheDir /* directory */
-    )
+private sealed class GalleryPhotosFabState {
+    data object PhotosSelected : GalleryPhotosFabState()
+    data class ImportAvailable(val deviceHasCamera: Boolean) : GalleryPhotosFabState()
 }
+
+private fun GalleryUiState.HasPhotos.toFabState(deviceHasCamera: Boolean) =
+    if (this.selectedPhotos.isNotEmpty())
+        GalleryPhotosFabState.PhotosSelected
+    else
+        GalleryPhotosFabState.ImportAvailable(deviceHasCamera)
