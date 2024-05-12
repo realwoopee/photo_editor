@@ -3,11 +3,20 @@ package com.pokhuimand.photoeditor.filters
 import android.graphics.Bitmap
 import java.io.Serializable
 
-sealed class FilterSettings : Serializable {
+open class FilterSettings : Serializable {
 
 }
 
-interface Filter<T> where T : FilterSettings {
-    val settings: T
-    fun apply(image: Bitmap): Bitmap
+interface Filter {
+    val id: String
+    val category: FilterCategory
+    fun apply(image: Bitmap, settings: FilterSettings): Bitmap
+}
+
+enum class FilterCategory {
+    CropResize,
+    ColorCorrection,
+    FaceDetect,
+    Retouch,
+    TriPointTransform
 }
