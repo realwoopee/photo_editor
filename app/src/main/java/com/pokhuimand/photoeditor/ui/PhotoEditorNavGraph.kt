@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.pokhuimand.photoeditor.data.photos.AppContainer
+import com.pokhuimand.photoeditor.data.AppContainer
 import com.pokhuimand.photoeditor.ui.Destinations.EDIT_ROUTE
 import com.pokhuimand.photoeditor.ui.Destinations.HOME_ROUTE
 import com.pokhuimand.photoeditor.ui.screens.edit.EditRoute
@@ -52,13 +52,17 @@ fun PhotoEditorNavGraph(
             enterTransition = { this.slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left) },
             exitTransition = { this.slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right) }) {
             val photoId = checkNotNull(checkNotNull(it.arguments).getString("photoId"))
-            val photo =
-                BitmapFactory.decodeFile(appContainer.photosRepository.getPhoto(photoId).uri.path)
             val editViewModel: EditViewModel =
                 viewModel(
                     factory = EditViewModel.provideFactory(
-                        photo,
-                        navigateBack = navController::navigateUp
+                        photoId, appContainer.photosRepository,
+                        navigateBack = navController::navigateUp,
+                        onPhotoSave = { img ->
+                            appContainer.photosRepository.savePhoto(
+                                photoId,
+                                img
+                            )
+                        }
                     )
                 )
             EditRoute(viewModel = editViewModel)

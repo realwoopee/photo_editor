@@ -47,6 +47,8 @@ android {
 dependencies {
     implementation(libs.coil.compose)
 
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.material)
     implementation(libs.androidx.compiler)
     implementation(libs.androidx.ui.tooling.preview)

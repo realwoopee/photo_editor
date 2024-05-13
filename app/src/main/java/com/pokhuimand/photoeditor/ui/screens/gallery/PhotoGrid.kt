@@ -65,12 +65,13 @@ fun PhotoGrid(
                             modifier = Modifier.padding(4.dp)
                         )
                     }
-                }) + items(it.value.sortedBy { p -> p.creationDate }) { photo ->
+                }) + items(it.value.sortedByDescending { p -> p.creationDate }) { photo ->
                     key(photo) {
                         Box {
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(photo.uri)
+                                    .diskCacheKey(photo.id + photo.creationDate)
                                     .crossfade(true)
                                     .build(),
                                 contentDescription = "",

@@ -10,7 +10,8 @@ open class FilterSettings : Serializable {
 interface Filter {
     val id: String
     val category: FilterCategory
-    fun apply(image: Bitmap, settings: FilterSettings): Bitmap
+    suspend fun apply(image: Bitmap, settings: FilterSettings): Bitmap
+    suspend fun applyDefaults(image: Bitmap): Bitmap
 }
 
 enum class FilterCategory {

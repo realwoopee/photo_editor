@@ -1,7 +1,7 @@
 package com.pokhuimand.photoeditor
 
 import android.app.Application
-import com.pokhuimand.photoeditor.data.photos.AppContainer
+import com.pokhuimand.photoeditor.data.AppContainer
 
 class PhotoEditorApplication : Application() {
     lateinit var appContainer: AppContainer

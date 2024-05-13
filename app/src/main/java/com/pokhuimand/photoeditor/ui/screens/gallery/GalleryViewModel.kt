@@ -76,7 +76,7 @@ class GalleryViewModel(
     companion object {
         fun provideFactory(
             photosRepository: PhotosRepository,
-            onOpenEditor: (photoId: String) -> Unit
+            onOpenEditor: (photoId: String) -> Unit,
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")

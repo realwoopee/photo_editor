@@ -1,5 +1,6 @@
 package com.pokhuimand.photoeditor.data.photos
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.pokhuimand.photoeditor.models.Photo
 import kotlinx.coroutines.flow.Flow
@@ -15,4 +16,5 @@ interface PhotosRepository {
     fun importContent(uri: Uri)
 
     fun observePhotos(): Flow<List<Photo>>
+    fun savePhoto(photoId: String, image: Bitmap)
 }

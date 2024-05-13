@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.data.photos
+package com.pokhuimand.photoeditor.data
 
 import android.content.Context
 import com.pokhuimand.photoeditor.data.photos.impl.FileSystemPhotoRepository
