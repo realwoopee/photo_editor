@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.NothingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
 import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
@@ -19,6 +20,17 @@ fun EditRoute(viewModel: EditViewModel) {
                 onBackPress = { viewModel.onBackPress() },
                 onFilterSelect = viewModel::onFilterSelect
             )
+        }
+
+        is GrayscaleFilter -> {
+            EditGrayscaleFilterScreen(
+                photoPreview = uiState.photo.asImageBitmap(),
+                isProcessingRunning = uiState.isProcessingRunning,
+                onBackPress = viewModel::onBackPress,
+                onCancelPress = { viewModel.onFilterSelect(null) },
+                onDonePress = viewModel::onFilterApply
+            )
+
         }
 
         is NothingFilter -> {
