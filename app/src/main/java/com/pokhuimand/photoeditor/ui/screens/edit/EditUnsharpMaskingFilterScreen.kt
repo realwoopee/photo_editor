@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -35,9 +34,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilterSettings
-
 
 @Composable
 fun EditUnsharpMaskingFilterScreen(
@@ -147,54 +144,3 @@ fun EditUnsharpMaskingFilterScreen(
     }
 
 }
-
-@Composable
-fun EditNothingFilterScreen(
-    photoPreview: ImageBitmap,
-    onBackPress: () -> Unit,
-    onDonePress: () -> Unit,
-    onCancelPress: () -> Unit
-) {
-    BackHandler(onBack = onCancelPress)
-    Scaffold(topBar = {
-        TopAppBar(title = { },
-            navigationIcon = {
-                IconButton(
-                    onClick = onBackPress
-                ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, null) }
-            }
-        )
-    }, bottomBar = {
-        BottomAppBar() {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(onClick = onCancelPress) {
-                    Icon(Icons.Default.DeleteForever, null)
-                }
-
-                IconButton(onClick = onDonePress) {
-                    Icon(Icons.Default.Done, null)
-                }
-            }
-        }
-    }) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            Image(
-                bitmap = photoPreview,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter),
-                contentScale = ContentScale.Fit,
-            )
-        }
-    }
-
-}
-
