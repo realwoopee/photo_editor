@@ -29,7 +29,7 @@ data class UnsharpMaskingFilterSettings(
     }
 
     companion object {
-        val default = UnsharpMaskingFilterSettings(1.0, 1.0, 1.3)
+        val default = UnsharpMaskingFilterSettings(1.0, 1.0, 128.0)
     }
 }
 

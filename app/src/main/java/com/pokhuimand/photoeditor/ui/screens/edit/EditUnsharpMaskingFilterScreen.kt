@@ -98,7 +98,8 @@ fun EditUnsharpMaskingFilterScreen(
                         onFilterSettingsUpdate(filterSettings)
                     },
                     valueRange = UnsharpMaskingFilterSettings.Ranges.amount,
-                    label = "Amount"
+                    label = "Amount",
+                    valueFormat = { String.format("%d%%", (it * 100).toInt()) }
                 )
                 SliderWithLabelAndValue(
                     value = (filterSettings.radius.toFloat()),
@@ -110,7 +111,8 @@ fun EditUnsharpMaskingFilterScreen(
                         onFilterSettingsUpdate(filterSettings)
                     },
                     valueRange = UnsharpMaskingFilterSettings.Ranges.radius,
-                    label = "Radius"
+                    label = "Radius",
+                    valueFormat = { String.format("%.2f", it) }
                 )
                 SliderWithLabelAndValue(
                     value = (filterSettings.threshold).toFloat(),
@@ -122,7 +124,8 @@ fun EditUnsharpMaskingFilterScreen(
                         onFilterSettingsUpdate(filterSettings)
                     },
                     valueRange = UnsharpMaskingFilterSettings.Ranges.threshold,
-                    label = "Threshold"
+                    label = "Threshold",
+                    valueFormat = { it.toInt().toString() }
                 )
 
                 Row(

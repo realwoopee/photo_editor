@@ -15,12 +15,15 @@ fun SliderWithLabelAndValue(
     value: Float,
     onValueChange: (Float) -> Unit,
     onValueChangeFinished: (() -> Unit)? = null,
-    valueRange: ClosedFloatingPointRange<Float>
+    valueRange: ClosedFloatingPointRange<Float>,
+    valueFormat: (Float) -> String = { it.toString() }
 ) {
     Column {
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text(text = label)
-            Text(text = value.toString())
+            Text(
+                text = valueFormat(value)
+            )
         }
         Slider(
             value, onValueChange, valueRange = valueRange,
