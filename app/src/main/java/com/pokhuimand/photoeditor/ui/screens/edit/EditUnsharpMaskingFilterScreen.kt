@@ -104,7 +104,7 @@ fun EditUnsharpMaskingFilterScreen(
                     value = (filterSettings.radius.toFloat()),
                     onValueChange = {
                         filterSettings =
-                            filterSettings.copy(radius = (it).toInt())
+                            filterSettings.copy(radius = it.toDouble())
                     },
                     onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
