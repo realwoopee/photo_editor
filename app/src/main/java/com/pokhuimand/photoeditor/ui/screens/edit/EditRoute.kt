@@ -8,6 +8,10 @@ import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.NothingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
 import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditGrayscaleFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditNothingFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditRotateFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditUnsharpMaskingFilterScreen
 
 @Composable
 fun EditRoute(viewModel: EditViewModel) {

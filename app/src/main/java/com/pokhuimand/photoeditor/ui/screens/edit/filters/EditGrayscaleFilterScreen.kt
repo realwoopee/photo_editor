@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit
+package com.pokhuimand.photoeditor.ui.screens.edit.filters
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image

@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit
+package com.pokhuimand.photoeditor.ui.screens.edit.filters
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -32,21 +34,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
+import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
 import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilterSettings
 
+
 @Composable
-fun EditUnsharpMaskingFilterScreen(
+fun EditRotateFilterScreen(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
     onCancelPress: () -> Unit,
-    onFilterSettingsUpdate: (UnsharpMaskingFilterSettings) -> Unit
+    onFilterSettingsUpdate: (RotateFilterSettings) -> Unit
 ) {
     var filterSettings by remember {
-        mutableStateOf(UnsharpMaskingFilterSettings.default)
+        mutableStateOf(RotateFilterSettings.default)
     }
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
@@ -88,46 +94,66 @@ fun EditUnsharpMaskingFilterScreen(
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
             ) {
-                SliderWithLabelAndValue(
-                    value = (filterSettings.amount).toFloat(),
-                    onValueChange = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    IconButton(onClick = {
                         filterSettings =
-                            filterSettings.copy(amount = (it).toDouble())
-                    },
-                    onValueChangeFinished = {
+                            filterSettings.copy(degrees = ((filterSettings.degrees + 180).mod(360.0)).toFloat() - 90f)
                         onFilterSettingsUpdate(filterSettings)
-                    },
-                    valueRange = UnsharpMaskingFilterSettings.Ranges.amount,
-                    label = "Amount",
-                    valueFormat = { String.format("%d%%", (it * 100).toInt()) }
-                )
-                SliderWithLabelAndValue(
-                    value = (filterSettings.radius.toFloat()),
-                    onValueChange = {
-                        filterSettings =
-                            filterSettings.copy(radius = it.toDouble())
-                    },
-                    onValueChangeFinished = {
-                        onFilterSettingsUpdate(filterSettings)
-                    },
-                    valueRange = UnsharpMaskingFilterSettings.Ranges.radius,
-                    label = "Radius",
-                    valueFormat = { String.format("%.2f", it) }
-                )
-                SliderWithLabelAndValue(
-                    value = (filterSettings.threshold).toFloat(),
-                    onValueChange = {
-                        filterSettings =
-                            filterSettings.copy(threshold = (it).toDouble())
-                    },
-                    onValueChangeFinished = {
-                        onFilterSettingsUpdate(filterSettings)
-                    },
-                    valueRange = UnsharpMaskingFilterSettings.Ranges.threshold,
-                    label = "Threshold",
-                    valueFormat = { it.toInt().toString() }
-                )
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.rotate_90_degrees_cw_24dp_fill0_wght400_grad0_opsz24),
+                            null
+                        )
+                    }
 
+                    IconButton(onClick = {
+                        filterSettings =
+                            filterSettings.copy(degrees = 0f)
+                        onFilterSettingsUpdate(filterSettings)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                            null,
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        filterSettings =
+                            filterSettings.copy(degrees = ((filterSettings.degrees).mod(360.0)).toFloat() - 90f)
+                        onFilterSettingsUpdate(filterSettings)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.rotate_90_degrees_ccw_24dp_fill0_wght400_grad0_opsz24),
+                            null,
+                        )
+                    }
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    SliderWithLabelAndValue(
+                        value = (filterSettings.degrees),
+                        onValueChange = {
+                            filterSettings =
+                                filterSettings.copy(degrees = it)
+                        },
+                        onValueChangeFinished = {
+                            onFilterSettingsUpdate(filterSettings)
+                        },
+                        valueRange = RotateFilterSettings.Ranges.degrees,
+                        label = "Degrees",
+                        valueFormat = { String.format("%.2f°", it) }
+                    )
+                }
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -147,3 +173,4 @@ fun EditUnsharpMaskingFilterScreen(
     }
 
 }
+

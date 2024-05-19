@@ -39,7 +39,7 @@ data class GrayscaleFilterSettings(
 }
 
 class GrayscaleFilter : Filter {
-    override val id: String = "rotate"
+    override val id: String = "grayscale"
     override val category: FilterCategory = FilterCategory.ColorCorrection
 
     override suspend fun applyDefaults(image: Bitmap): Bitmap {
