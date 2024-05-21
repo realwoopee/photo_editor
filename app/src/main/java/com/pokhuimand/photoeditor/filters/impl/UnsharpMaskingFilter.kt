@@ -2,6 +2,7 @@ package com.pokhuimand.photoeditor.filters.impl
 
 import android.graphics.Bitmap
 import com.pokhuimand.photoeditor.filters.Filter
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
@@ -38,11 +39,15 @@ class UnsharpMaskingFilter : Filter {
     override val id: String = "unsharp-masking"
     override val category: FilterCategory = FilterCategory.ColorCorrection
 
-    override suspend fun applyDefaults(image: Bitmap): Bitmap {
-        return apply(image, UnsharpMaskingFilterSettings.default)
+    override suspend fun applyDefaults(image: Bitmap, cache: FilterDataCache): Bitmap {
+        return apply(image, UnsharpMaskingFilterSettings.default, cache)
     }
 
-    override suspend fun apply(image: Bitmap, settings: FilterSettings): Bitmap {
+    override suspend fun apply(
+        image: Bitmap,
+        settings: FilterSettings,
+        cache: FilterDataCache
+    ): Bitmap {
         val sets = settings as UnsharpMaskingFilterSettings
         return withContext(Dispatchers.Default) {
             unsharpMaskingAsync(

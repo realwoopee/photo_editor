@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.pokhuimand.photoeditor.data.photos.PhotosRepository
 import com.pokhuimand.photoeditor.filters.Filter
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import com.pokhuimand.photoeditor.filters.Filters
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,7 @@ class EditViewModel(
         MutableStateFlow(
             EditViewModelState(
                 photoId, BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
+                null,
                 null,
                 false
             )
@@ -62,6 +64,7 @@ class EditViewModel(
         _state.update {
             it.copy(
                 filter = filter,
+                filterCache = filter?.buildCache(),
                 preview = BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path)
             )
         }
@@ -72,7 +75,8 @@ class EditViewModel(
                     if (it.filter != null)
                         it.copy(
                             preview = Filters.keyedImplementations[filter.id]!!.applyDefaults(
-                                BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path)
+                                BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
+                                it.filterCache!!
                             ),
                             isProcessingRunning = false
                         )
@@ -90,7 +94,8 @@ class EditViewModel(
                     it.copy(
                         preview = Filters.keyedImplementations[it.filter.id]!!.apply(
                             BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
-                            filterSettings
+                            filterSettings,
+                            it.filterCache!!
                         ),
                         isProcessingRunning = false
                     )
@@ -120,6 +125,7 @@ private data class EditViewModelState(
     val photoId: String,
     val preview: Bitmap,
     val filter: Filter?,
+    val filterCache: FilterDataCache?,
     val isProcessingRunning: Boolean
 ) {
     fun toUiState(): EditUiState.HasPhoto =

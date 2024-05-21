@@ -1,21 +1,13 @@
 package com.pokhuimand.photoeditor.filters.impl
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
-import android.util.Log
 import com.pokhuimand.photoeditor.filters.Filter
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import kotlin.system.measureTimeMillis
 
 data class DitheringFilterSettings(val levels: Int, val errorMultiplier: Double) :
     FilterSettings() {
@@ -34,11 +26,15 @@ class DitheringFilter : Filter {
     override val id: String = "dithering"
     override val category: FilterCategory = FilterCategory.ColorCorrection
 
-    override suspend fun applyDefaults(image: Bitmap): Bitmap {
-        return apply(image, DitheringFilterSettings.default)
+    override suspend fun applyDefaults(image: Bitmap, cache: FilterDataCache): Bitmap {
+        return apply(image, DitheringFilterSettings.default, cache)
     }
 
-    override suspend fun apply(image: Bitmap, settings: FilterSettings): Bitmap {
+    override suspend fun apply(
+        image: Bitmap,
+        settings: FilterSettings,
+        cache: FilterDataCache
+    ): Bitmap {
         val sets = settings as DitheringFilterSettings
         return withContext(Dispatchers.Default) {
             return@withContext applyColorDitheringFilter(

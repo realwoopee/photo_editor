@@ -3,6 +3,7 @@ package com.pokhuimand.photoeditor.filters.impl
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.pokhuimand.photoeditor.filters.Filter
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
@@ -10,8 +11,6 @@ import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sin
 
 data class RotateFilterSettings(
@@ -32,11 +31,15 @@ class RotateFilter : Filter {
     override val id: String = "rotate"
     override val category: FilterCategory = FilterCategory.CropResize
 
-    override suspend fun applyDefaults(image: Bitmap): Bitmap {
-        return apply(image, RotateFilterSettings.default)
+    override suspend fun applyDefaults(image: Bitmap, cache: FilterDataCache): Bitmap {
+        return apply(image, RotateFilterSettings.default, cache)
     }
 
-    override suspend fun apply(image: Bitmap, settings: FilterSettings): Bitmap {
+    override suspend fun apply(
+        image: Bitmap,
+        settings: FilterSettings,
+        cache: FilterDataCache
+    ): Bitmap {
         val sets = settings as RotateFilterSettings
         return withContext(Dispatchers.Default) {
             rotate(
