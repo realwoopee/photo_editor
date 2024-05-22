@@ -4,18 +4,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilter
-import com.pokhuimand.photoeditor.filters.impl.DitheringFilter
-import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.NothingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditContrastAndBrightnessFilterScreen
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditDitheringFilterScreen
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditContrastAndBrightnessFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditDitheringFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditGrayscaleFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditNothingFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditPixelSortingFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditRotateFilterScreen
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditUnsharpMaskingFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditUnsharpMaskingFilterScreen
 
 @Composable
 fun EditRoute(viewModel: EditViewModel) {
@@ -42,6 +44,17 @@ fun EditRoute(viewModel: EditViewModel) {
 
         is DitheringFilter -> {
             EditDitheringFilterScreen(
+                photoPreview = uiState.photo.asImageBitmap(),
+                isProcessingRunning = uiState.isProcessingRunning,
+                onBackPress = viewModel::onBackPress,
+                onCancelPress = { viewModel.onFilterSelect(null) },
+                onDonePress = viewModel::onFilterApply,
+                onFilterSettingsUpdate = viewModel::onFilterSettingsUpdate
+            )
+        }
+
+        is PixelSortingFilter -> {
+            EditPixelSortingFilterScreen(
                 photoPreview = uiState.photo.asImageBitmap(),
                 isProcessingRunning = uiState.isProcessingRunning,
                 onBackPress = viewModel::onBackPress,

@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.filters.impl
+package com.pokhuimand.photoeditor.filters.impl.colorcorrection
 
 import android.graphics.Bitmap
 import com.pokhuimand.photoeditor.filters.Filter

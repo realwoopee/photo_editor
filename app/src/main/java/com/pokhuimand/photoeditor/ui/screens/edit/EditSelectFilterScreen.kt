@@ -18,9 +18,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.AirplaneTicket
-import androidx.compose.material.icons.automirrored.filled.Announcement
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Article
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,12 +40,12 @@ import com.pokhuimand.photoeditor.components.SelectableIconButton
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.Filters
-import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilter
-import com.pokhuimand.photoeditor.filters.impl.DitheringFilter
-import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
-import com.pokhuimand.photoeditor.filters.impl.NothingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
 
 @Composable
 fun EditSelectFilterScreen(
@@ -109,6 +109,8 @@ fun EditSelectFilterScreen(
                                             is ContrastAndBrightnessFilter -> ImageVector.vectorResource(
                                                 id = R.drawable.baseline_invert_colors_24
                                             )
+
+                                            is PixelSortingFilter -> Icons.AutoMirrored.Filled.Sort
 
                                             else -> Icons.AutoMirrored.Filled.Article
                                         },

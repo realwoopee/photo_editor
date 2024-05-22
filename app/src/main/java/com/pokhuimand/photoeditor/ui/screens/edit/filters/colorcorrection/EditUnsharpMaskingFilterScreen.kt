@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit.filters
+package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -34,26 +32,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.impl.DitheringFilterSettings
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilterSettings
-import kotlin.math.round
-
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilterSettings
 
 @Composable
-fun EditDitheringFilterScreen(
+fun EditUnsharpMaskingFilterScreen(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
     onCancelPress: () -> Unit,
-    onFilterSettingsUpdate: (DitheringFilterSettings) -> Unit
+    onFilterSettingsUpdate: (UnsharpMaskingFilterSettings) -> Unit
 ) {
     var filterSettings by remember {
-        mutableStateOf(DitheringFilterSettings.default)
+        mutableStateOf(UnsharpMaskingFilterSettings.default)
     }
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
@@ -96,31 +89,45 @@ fun EditDitheringFilterScreen(
                     .align(Alignment.BottomCenter)
             ) {
                 SliderWithLabelAndValue(
-                    value = (filterSettings.levels).toFloat(),
+                    value = (filterSettings.amount).toFloat(),
                     onValueChange = {
                         filterSettings =
-                            filterSettings.copy(levels = Math.round(it))
+                            filterSettings.copy(amount = (it).toDouble())
                     },
                     onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
                     },
-                    valueRange = DitheringFilterSettings.Ranges.levels,
-                    label = "Bit-depth",
-                    valueFormat = { String.format("%d bits", Math.round(it)) }
+                    valueRange = UnsharpMaskingFilterSettings.Ranges.amount,
+                    label = "Amount",
+                    valueFormat = { String.format("%d%%", (it * 100).toInt()) }
                 )
                 SliderWithLabelAndValue(
-                    value = (filterSettings.errorMultiplier.toFloat()),
+                    value = (filterSettings.radius.toFloat()),
                     onValueChange = {
                         filterSettings =
-                            filterSettings.copy(errorMultiplier = it.toDouble())
+                            filterSettings.copy(radius = it.toDouble())
                     },
                     onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
                     },
-                    valueRange = DitheringFilterSettings.Ranges.errorMultiplier,
-                    label = "Error multiplier",
-                    valueFormat = { String.format("%d%%", Math.round(it * 100)) }
+                    valueRange = UnsharpMaskingFilterSettings.Ranges.radius,
+                    label = "Radius",
+                    valueFormat = { String.format("%.2f", it) }
                 )
+                SliderWithLabelAndValue(
+                    value = (filterSettings.threshold).toFloat(),
+                    onValueChange = {
+                        filterSettings =
+                            filterSettings.copy(threshold = (it).toDouble())
+                    },
+                    onValueChangeFinished = {
+                        onFilterSettingsUpdate(filterSettings)
+                    },
+                    valueRange = UnsharpMaskingFilterSettings.Ranges.threshold,
+                    label = "Threshold",
+                    valueFormat = { it.toInt().toString() }
+                )
+
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -140,4 +147,3 @@ fun EditDitheringFilterScreen(
     }
 
 }
-

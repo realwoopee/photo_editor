@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.filters.impl
+package com.pokhuimand.photoeditor.filters.impl.colorcorrection
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -10,6 +10,7 @@ import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterSettings
+import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit.filters
+package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -11,17 +11,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,28 +41,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import com.pokhuimand.photoeditor.R
+import androidx.compose.ui.unit.dp
 import com.pokhuimand.photoeditor.components.ProgressSpinner
-import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilterSettings
-import com.pokhuimand.photoeditor.filters.impl.DitheringFilterSettings
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilterSettings
-import kotlin.math.round
-import kotlin.math.roundToInt
+import com.pokhuimand.photoeditor.components.RangeSliderWithLabelAndValue
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilterSettings
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.SortDirection
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditContrastAndBrightnessFilterScreen(
+fun EditPixelSortingFilterScreen(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
     onCancelPress: () -> Unit,
-    onFilterSettingsUpdate: (ContrastAndBrightnessFilterSettings) -> Unit
+    onFilterSettingsUpdate: (PixelSortingFilterSettings) -> Unit
 ) {
+    var selectedSort by remember { mutableStateOf(SortDirection.Up) }
     var filterSettings by remember {
-        mutableStateOf(ContrastAndBrightnessFilterSettings.default)
+        mutableStateOf(PixelSortingFilterSettings.default)
     }
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
@@ -97,37 +102,51 @@ fun EditContrastAndBrightnessFilterScreen(
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
             ) {
-                SliderWithLabelAndValue(
-                    value = (filterSettings.contrast),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Sort:")
+                    MultiChoiceSegmentedButtonRow() {
+                        SortDirection.entries.mapIndexed() { index, direction ->
+                            SegmentedButton(
+                                checked = filterSettings.direction == direction,
+                                onCheckedChange = { checked ->
+                                    if (checked) {
+                                        filterSettings = filterSettings.copy(direction = direction)
+                                        onFilterSettingsUpdate(filterSettings)
+                                    }
+                                },
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = SortDirection.entries.size
+                                ),
+                                icon = {}
+                            ) {
+                                Icon(
+                                    when (direction) {
+                                        SortDirection.Up -> Icons.Filled.ArrowUpward
+                                        SortDirection.Right -> Icons.Filled.ArrowForward
+                                        SortDirection.Down -> Icons.Filled.ArrowDownward
+                                        SortDirection.Left -> Icons.Filled.ArrowBack
+                                    }, null
+                                )
+                            }
+                        }
+                    }
+                }
+                RangeSliderWithLabelAndValue(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    value = (filterSettings.threshold),
                     onValueChange = {
                         filterSettings =
-                            filterSettings.copy(contrast = it)
+                            filterSettings.copy(threshold = it)
                     },
                     onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
                     },
-                    valueRange = ContrastAndBrightnessFilterSettings.Ranges.contrast,
-                    label = "Contrast",
-                    valueFormat = {
-                        val value = ((it - 1) * 100).roundToInt()
-                        "${if (value > 0) "+" else ""}${value}%"
-                    }
-                )
-                SliderWithLabelAndValue(
-                    value = (filterSettings.brightness),
-                    onValueChange = {
-                        filterSettings =
-                            filterSettings.copy(brightness = it)
-                    },
-                    onValueChangeFinished = {
-                        onFilterSettingsUpdate(filterSettings)
-                    },
-                    valueRange = ContrastAndBrightnessFilterSettings.Ranges.brightness,
-                    label = "Brightness",
-                    valueFormat = {
-                        val value = (it * 100).roundToInt()
-                        "${if (value > 0) "+" else ""}${value}%"
-                    }
+                    valueRange = PixelSortingFilterSettings.Ranges.threshold,
+                    label = "Masking Threshold",
                 )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,

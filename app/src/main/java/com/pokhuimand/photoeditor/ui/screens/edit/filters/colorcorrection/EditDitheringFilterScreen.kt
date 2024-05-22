@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit.filters
+package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -34,19 +34,20 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilterSettings
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilterSettings
+
 
 @Composable
-fun EditUnsharpMaskingFilterScreen(
+fun EditDitheringFilterScreen(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
     onCancelPress: () -> Unit,
-    onFilterSettingsUpdate: (UnsharpMaskingFilterSettings) -> Unit
+    onFilterSettingsUpdate: (DitheringFilterSettings) -> Unit
 ) {
     var filterSettings by remember {
-        mutableStateOf(UnsharpMaskingFilterSettings.default)
+        mutableStateOf(DitheringFilterSettings.default)
     }
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
@@ -89,45 +90,31 @@ fun EditUnsharpMaskingFilterScreen(
                     .align(Alignment.BottomCenter)
             ) {
                 SliderWithLabelAndValue(
-                    value = (filterSettings.amount).toFloat(),
+                    value = (filterSettings.levels).toFloat(),
                     onValueChange = {
                         filterSettings =
-                            filterSettings.copy(amount = (it).toDouble())
+                            filterSettings.copy(levels = Math.round(it))
                     },
                     onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
                     },
-                    valueRange = UnsharpMaskingFilterSettings.Ranges.amount,
-                    label = "Amount",
-                    valueFormat = { String.format("%d%%", (it * 100).toInt()) }
+                    valueRange = DitheringFilterSettings.Ranges.levels,
+                    label = "Bit-depth",
+                    valueFormat = { String.format("%d bits", Math.round(it)) }
                 )
                 SliderWithLabelAndValue(
-                    value = (filterSettings.radius.toFloat()),
+                    value = (filterSettings.errorMultiplier.toFloat()),
                     onValueChange = {
                         filterSettings =
-                            filterSettings.copy(radius = it.toDouble())
+                            filterSettings.copy(errorMultiplier = it.toDouble())
                     },
                     onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
                     },
-                    valueRange = UnsharpMaskingFilterSettings.Ranges.radius,
-                    label = "Radius",
-                    valueFormat = { String.format("%.2f", it) }
+                    valueRange = DitheringFilterSettings.Ranges.errorMultiplier,
+                    label = "Error multiplier",
+                    valueFormat = { String.format("%d%%", Math.round(it * 100)) }
                 )
-                SliderWithLabelAndValue(
-                    value = (filterSettings.threshold).toFloat(),
-                    onValueChange = {
-                        filterSettings =
-                            filterSettings.copy(threshold = (it).toDouble())
-                    },
-                    onValueChangeFinished = {
-                        onFilterSettingsUpdate(filterSettings)
-                    },
-                    valueRange = UnsharpMaskingFilterSettings.Ranges.threshold,
-                    label = "Threshold",
-                    valueFormat = { it.toInt().toString() }
-                )
-
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -147,3 +134,4 @@ fun EditUnsharpMaskingFilterScreen(
     }
 
 }
+
