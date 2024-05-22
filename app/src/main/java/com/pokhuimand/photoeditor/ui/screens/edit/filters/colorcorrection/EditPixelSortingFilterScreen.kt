@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit.filters
+package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -11,16 +11,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,26 +37,27 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
-import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
+import com.pokhuimand.photoeditor.components.RangeSliderWithLabelAndValue
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilterSettings
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.SortDirection
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditRotateFilterScreen(
+fun EditPixelSortingFilterScreen(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
     onCancelPress: () -> Unit,
-    onFilterSettingsUpdate: (RotateFilterSettings) -> Unit
+    onFilterSettingsUpdate: (PixelSortingFilterSettings) -> Unit
 ) {
     var filterSettings by remember {
-        mutableStateOf(RotateFilterSettings.default)
+        mutableStateOf(PixelSortingFilterSettings.default)
     }
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
@@ -96,65 +100,55 @@ fun EditRotateFilterScreen(
                     .align(Alignment.BottomCenter)
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .align(Alignment.CenterHorizontally)
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees + 180).mod(360.0)).toFloat() - 90f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_cw_24dp_fill0_wght400_grad0_opsz24),
-                            null
-                        )
-                    }
+                    Text("Sort:")
+                    MultiChoiceSegmentedButtonRow() {
+                        SortDirection.entries.mapIndexed() { index, direction ->
+                            SegmentedButton(
+                                checked = filterSettings.direction == direction,
+                                onCheckedChange = { checked ->
+                                    if (checked) {
+                                        filterSettings = filterSettings.copy(direction = direction)
+                                        onFilterSettingsUpdate(filterSettings)
+                                    }
+                                },
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = SortDirection.entries.size
+                                ),
+                                icon = {}
+                            ) {
+                                Icon(
+                                    ImageVector.vectorResource(
+                                        id =
+                                        when (direction) {
+                                            SortDirection.Up -> R.drawable.arrow_upward_24dp_fill0_wght400_grad0_opsz24
+                                            SortDirection.Right -> R.drawable.arrow_forward_24dp_fill0_wght400_grad0_opsz24
+                                            SortDirection.Down -> R.drawable.arrow_downward_24dp_fill0_wght400_grad0_opsz24
+                                            SortDirection.Left -> R.drawable.arrow_back_24dp_fill0_wght400_grad0_opsz24
+                                        }
+                                    ), null
 
-                    IconButton(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = 0f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
-                            null,
-                        )
-                    }
-
-                    IconButton(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees).mod(360.0)).toFloat() - 90f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_ccw_24dp_fill0_wght400_grad0_opsz24),
-                            null,
-                        )
+                                )
+                            }
+                        }
                     }
                 }
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    SliderWithLabelAndValue(
-                        value = (filterSettings.degrees),
-                        onValueChange = {
-                            filterSettings =
-                                filterSettings.copy(degrees = it)
-                        },
-                        onValueChangeFinished = {
-                            onFilterSettingsUpdate(filterSettings)
-                        },
-                        valueRange = RotateFilterSettings.Ranges.degrees,
-                        label = "Degrees",
-                        valueFormat = { String.format("%.2f°", it) }
-                    )
-                }
+                RangeSliderWithLabelAndValue(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    value = (filterSettings.threshold),
+                    onValueChange = {
+                        filterSettings =
+                            filterSettings.copy(threshold = it)
+                    },
+                    onValueChangeFinished = {
+                        onFilterSettingsUpdate(filterSettings)
+                    },
+                    valueRange = PixelSortingFilterSettings.Ranges.threshold,
+                    label = "Masking Threshold",
+                )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier

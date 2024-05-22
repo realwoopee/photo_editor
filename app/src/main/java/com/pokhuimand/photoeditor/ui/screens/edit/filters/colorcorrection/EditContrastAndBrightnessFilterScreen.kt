@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit.filters
+package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,26 +33,26 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilterSettings
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditRotateFilterScreen(
+fun EditContrastAndBrightnessFilterScreen(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
     onCancelPress: () -> Unit,
-    onFilterSettingsUpdate: (RotateFilterSettings) -> Unit
+    onFilterSettingsUpdate: (ContrastAndBrightnessFilterSettings) -> Unit
 ) {
     var filterSettings by remember {
-        mutableStateOf(RotateFilterSettings.default)
+        mutableStateOf(ContrastAndBrightnessFilterSettings.default)
     }
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
@@ -95,66 +94,38 @@ fun EditRotateFilterScreen(
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    IconButton(onClick = {
+                SliderWithLabelAndValue(
+                    value = (filterSettings.contrast),
+                    onValueChange = {
                         filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees + 180).mod(360.0)).toFloat() - 90f)
+                            filterSettings.copy(contrast = it)
+                    },
+                    onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_cw_24dp_fill0_wght400_grad0_opsz24),
-                            null
-                        )
+                    },
+                    valueRange = ContrastAndBrightnessFilterSettings.Ranges.contrast,
+                    label = "Contrast",
+                    valueFormat = {
+                        val value = ((it - 1) * 100).roundToInt()
+                        "${if (value > 0) "+" else ""}${value}%"
                     }
-
-                    IconButton(onClick = {
+                )
+                SliderWithLabelAndValue(
+                    value = (filterSettings.brightness),
+                    onValueChange = {
                         filterSettings =
-                            filterSettings.copy(degrees = 0f)
+                            filterSettings.copy(brightness = it)
+                    },
+                    onValueChangeFinished = {
                         onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
-                            null,
-                        )
+                    },
+                    valueRange = ContrastAndBrightnessFilterSettings.Ranges.brightness,
+                    label = "Brightness",
+                    valueFormat = {
+                        val value = (it * 100).roundToInt()
+                        "${if (value > 0) "+" else ""}${value}%"
                     }
-
-                    IconButton(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees).mod(360.0)).toFloat() - 90f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_ccw_24dp_fill0_wght400_grad0_opsz24),
-                            null,
-                        )
-                    }
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    SliderWithLabelAndValue(
-                        value = (filterSettings.degrees),
-                        onValueChange = {
-                            filterSettings =
-                                filterSettings.copy(degrees = it)
-                        },
-                        onValueChangeFinished = {
-                            onFilterSettingsUpdate(filterSettings)
-                        },
-                        valueRange = RotateFilterSettings.Ranges.degrees,
-                        label = "Degrees",
-                        valueFormat = { String.format("%.2f°", it) }
-                    )
-                }
+                )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier

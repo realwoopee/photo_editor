@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 
 @Composable
 fun SelectableIconButton(
@@ -32,7 +29,7 @@ fun SelectableIconButton(
                     .then(
                         when (state) {
                             true -> Modifier.background(
-                                MaterialTheme.colors.secondary,
+                                MaterialTheme.colorScheme.secondary,
                                 shape = RoundedCornerShape(15)
                             )
 

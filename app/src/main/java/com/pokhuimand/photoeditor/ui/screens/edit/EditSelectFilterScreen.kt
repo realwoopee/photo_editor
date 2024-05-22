@@ -12,15 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.AirplaneTicket
-import androidx.compose.material.icons.automirrored.filled.Announcement
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Article
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,12 +38,15 @@ import com.pokhuimand.photoeditor.components.SelectableIconButton
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.Filters
-import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
-import com.pokhuimand.photoeditor.filters.impl.NothingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditSelectFilterScreen(
     photoPreview: ImageBitmap,
@@ -100,13 +101,24 @@ fun EditSelectFilterScreen(
                                     modifier = Modifier.fillMaxHeight()
                                 ) {
                                     Icon(
-                                        when (filter) {
-                                            is UnsharpMaskingFilter -> ImageVector.vectorResource(id = R.drawable.deblur_24dp_fill0_wght400_grad0_opsz24)
-                                            is RotateFilter -> ImageVector.vectorResource(id = R.drawable.autorenew_24dp_fill0_wght400_grad0_opsz24)
-                                            is ResizeFilter -> ImageVector.vectorResource(id = R.drawable.resize_24dp_fill0_wght400_grad0_opsz24)
-                                            is GrayscaleFilter -> Icons.AutoMirrored.Filled.AirplaneTicket
-                                            else -> Icons.AutoMirrored.Filled.Article
-                                        },
+                                        ImageVector.vectorResource(
+                                            id =
+                                            when (filter) {
+                                                is UnsharpMaskingFilter -> R.drawable.deblur_24dp_fill0_wght400_grad0_opsz24
+                                                is RotateFilter -> R.drawable.autorenew_24dp_fill0_wght400_grad0_opsz24
+                                                is GrayscaleFilter -> R.drawable.monochrome_photos_24dp_fill0_wght400_grad0_opsz24
+                                                is DitheringFilter -> R.drawable.transition_fade_24dp_fill0_wght400_grad0_opsz24
+                                                is ContrastAndBrightnessFilter -> R.drawable.baseline_invert_colors_24
+                                              is ResizeFilter -> R.drawable.resize_24dp_fill0_wght400_grad0_opsz24
+
+
+                                                is PixelSortingFilter -> R.drawable.filter_list_24dp_fill0_wght400_grad0_opsz24
+
+
+                                                else -> R.drawable.sentiment_very_dissatisfied_24dp_fill0_wght400_grad0_opsz24
+
+                                            }
+                                        ),
                                         null,
                                         modifier = Modifier
                                             .align(Alignment.Center)

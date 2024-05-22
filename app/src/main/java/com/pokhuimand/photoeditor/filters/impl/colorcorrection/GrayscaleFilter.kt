@@ -1,28 +1,21 @@
-package com.pokhuimand.photoeditor.filters.impl
+package com.pokhuimand.photoeditor.filters.impl.colorcorrection
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
-import android.graphics.Matrix
 import android.graphics.Paint
 import android.util.Log
-import androidx.core.graphics.get
-import androidx.core.graphics.set
 import com.pokhuimand.photoeditor.filters.Filter
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterSettings
+import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import java.nio.Buffer
-import java.nio.ByteBuffer
-import java.nio.IntBuffer
-import kotlin.math.exp
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.system.measureTimeMillis
 
 data class GrayscaleFilterSettings(
@@ -42,11 +35,15 @@ class GrayscaleFilter : Filter {
     override val id: String = "grayscale"
     override val category: FilterCategory = FilterCategory.ColorCorrection
 
-    override suspend fun applyDefaults(image: Bitmap): Bitmap {
-        return apply(image, RotateFilterSettings.default)
+    override suspend fun applyDefaults(image: Bitmap, cache: FilterDataCache): Bitmap {
+        return apply(image, RotateFilterSettings.default, cache)
     }
 
-    override suspend fun apply(image: Bitmap, settings: FilterSettings): Bitmap {
+    override suspend fun apply(
+        image: Bitmap,
+        settings: FilterSettings,
+        cache: FilterDataCache
+    ): Bitmap {
         return withContext(Dispatchers.Default) {
             var bitmap: Bitmap
             val sync = measureTimeMillis {

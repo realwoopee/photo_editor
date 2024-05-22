@@ -10,8 +10,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProgressIndicatorDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,11 +24,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ProgressSpinner(
+    modifier: Modifier = Modifier,
     size: Dp = 32.dp, // indicator size
     sweepAngle: Float = 90f, // angle (lenght) of indicator arc
-    color: Color = MaterialTheme.colors.primary, // color of indicator arc line
-    strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth, //width of cicle and ar lines,
-    modifier: Modifier = Modifier
+    color: Color = MaterialTheme.colorScheme.primary, // color of indicator arc line
+    strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth, //width of cicle and ar lines,
 ) {
     ////// animation //////
 
