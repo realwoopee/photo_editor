@@ -4,6 +4,7 @@ import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilter
 import com.pokhuimand.photoeditor.filters.impl.DitheringFilter
 import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.NothingFilter
+import com.pokhuimand.photoeditor.filters.impl.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
 import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
 
@@ -14,7 +15,8 @@ object Filters {
             RotateFilter(),
             GrayscaleFilter(),
             DitheringFilter(),
-            ContrastAndBrightnessFilter()
+            ContrastAndBrightnessFilter(),
+            PixelSortingFilter()
         )
     var keyedImplementations = implementations.associateBy { f -> f.id }
     val keys = implementations.map { f -> f.id }.toSet()

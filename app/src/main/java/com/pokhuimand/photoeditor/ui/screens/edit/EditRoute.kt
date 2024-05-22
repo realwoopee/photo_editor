@@ -8,12 +8,14 @@ import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilter
 import com.pokhuimand.photoeditor.filters.impl.DitheringFilter
 import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.NothingFilter
+import com.pokhuimand.photoeditor.filters.impl.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
 import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditContrastAndBrightnessFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditDitheringFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditGrayscaleFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditNothingFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditPixelSortingFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditRotateFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditUnsharpMaskingFilterScreen
 
@@ -42,6 +44,17 @@ fun EditRoute(viewModel: EditViewModel) {
 
         is DitheringFilter -> {
             EditDitheringFilterScreen(
+                photoPreview = uiState.photo.asImageBitmap(),
+                isProcessingRunning = uiState.isProcessingRunning,
+                onBackPress = viewModel::onBackPress,
+                onCancelPress = { viewModel.onFilterSelect(null) },
+                onDonePress = viewModel::onFilterApply,
+                onFilterSettingsUpdate = viewModel::onFilterSettingsUpdate
+            )
+        }
+
+        is PixelSortingFilter -> {
+            EditPixelSortingFilterScreen(
                 photoPreview = uiState.photo.asImageBitmap(),
                 isProcessingRunning = uiState.isProcessingRunning,
                 onBackPress = viewModel::onBackPress,
