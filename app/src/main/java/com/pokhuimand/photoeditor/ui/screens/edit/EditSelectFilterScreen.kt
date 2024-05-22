@@ -40,6 +40,7 @@ import com.pokhuimand.photoeditor.components.SelectableIconButton
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.Filters
+import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilter
 import com.pokhuimand.photoeditor.filters.impl.DitheringFilter
 import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.NothingFilter
@@ -105,6 +106,10 @@ fun EditSelectFilterScreen(
                                             is RotateFilter -> ImageVector.vectorResource(id = R.drawable.autorenew_24dp_fill0_wght400_grad0_opsz24)
                                             is GrayscaleFilter -> Icons.AutoMirrored.Filled.AirplaneTicket
                                             is DitheringFilter -> ImageVector.vectorResource(id = R.drawable.transition_fade_24dp_fill0_wght400_grad0_opsz24)
+                                            is ContrastAndBrightnessFilter -> ImageVector.vectorResource(
+                                                id = R.drawable.baseline_invert_colors_24
+                                            )
+
                                             else -> Icons.AutoMirrored.Filled.Article
                                         },
                                         null,
