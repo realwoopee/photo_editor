@@ -11,19 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
@@ -40,8 +35,11 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.RangeSliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilterSettings
@@ -58,7 +56,6 @@ fun EditPixelSortingFilterScreen(
     onCancelPress: () -> Unit,
     onFilterSettingsUpdate: (PixelSortingFilterSettings) -> Unit
 ) {
-    var selectedSort by remember { mutableStateOf(SortDirection.Up) }
     var filterSettings by remember {
         mutableStateOf(PixelSortingFilterSettings.default)
     }
@@ -124,19 +121,23 @@ fun EditPixelSortingFilterScreen(
                                 icon = {}
                             ) {
                                 Icon(
-                                    when (direction) {
-                                        SortDirection.Up -> Icons.Filled.ArrowUpward
-                                        SortDirection.Right -> Icons.Filled.ArrowForward
-                                        SortDirection.Down -> Icons.Filled.ArrowDownward
-                                        SortDirection.Left -> Icons.Filled.ArrowBack
-                                    }, null
+                                    ImageVector.vectorResource(
+                                        id =
+                                        when (direction) {
+                                            SortDirection.Up -> R.drawable.arrow_upward_24dp_fill0_wght400_grad0_opsz24
+                                            SortDirection.Right -> R.drawable.arrow_forward_24dp_fill0_wght400_grad0_opsz24
+                                            SortDirection.Down -> R.drawable.arrow_downward_24dp_fill0_wght400_grad0_opsz24
+                                            SortDirection.Left -> R.drawable.arrow_back_24dp_fill0_wght400_grad0_opsz24
+                                        }
+                                    ), null
+
                                 )
                             }
                         }
                     }
                 }
                 RangeSliderWithLabelAndValue(
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     value = (filterSettings.threshold),
                     onValueChange = {
                         filterSettings =
@@ -152,10 +153,13 @@ fun EditPixelSortingFilterScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.secondary)
+                        .background(MaterialTheme.colorScheme.secondary)
                 ) {
                     IconButton(onClick = onCancelPress) {
-                        Icon(Icons.Default.DeleteForever, null)
+                        Icon(
+                            ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                            null
+                        )
                     }
 
                     IconButton(onClick = onDonePress, enabled = !isProcessingRunning) {

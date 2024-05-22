@@ -73,7 +73,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation("androidx.compose.material:material-icons-extended")
+    //implementation("androidx.compose.material:material-icons-extended")
 
     implementation(libs.speed.dial.compose)
 }

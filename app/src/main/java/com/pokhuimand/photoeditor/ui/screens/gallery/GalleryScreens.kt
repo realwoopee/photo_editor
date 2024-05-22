@@ -1,10 +1,5 @@
 package com.pokhuimand.photoeditor.ui.screens.gallery
 
-import android.content.pm.PackageManager
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
@@ -16,16 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,11 +25,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import com.leinardi.android.speeddial.compose.SpeedDial
 import com.leinardi.android.speeddial.compose.SpeedDialOverlay
 import com.leinardi.android.speeddial.compose.SpeedDialState
+import com.pokhuimand.photoeditor.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
     Scaffold(
@@ -64,7 +58,10 @@ fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class, ExperimentalAnimationApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun GalleryPhotosScreen(
     uiState: GalleryUiState.HasPhotos,
@@ -97,7 +94,10 @@ fun GalleryPhotosScreen(
                         onClick = { onSelectedDelete() },
                         //modifier = Modifier.animateEnterExit(enter = fadeIn(), exit = fadeOut())
                     ) {
-                        Icon(Icons.Default.DeleteForever, null)
+                        Icon(
+                            ImageVector.vectorResource(id = R.drawable.delete_24dp_fill0_wght400_grad0_opsz24),
+                            null
+                        )
                     }
 
                     is GalleryPhotosFabState.ImportAvailable -> SpeedDial(
@@ -106,7 +106,12 @@ fun GalleryPhotosScreen(
                             speedDialState =
                                 if (expanded) SpeedDialState.Collapsed else SpeedDialState.Expanded
                         },
-                        fabOpenedContent = { Icon(Icons.Default.Cancel, null) },
+                        fabOpenedContent = {
+                            Icon(
+                                ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                                null
+                            )
+                        },
                         //modifier = Modifier.animateEnterExit(enter = fadeIn(), exit = fadeOut())
 
                     ) {
@@ -117,7 +122,10 @@ fun GalleryPhotosScreen(
                                     onImportPhoto()
                                 },
                             ) {
-                                Icon(Icons.Default.PhotoLibrary, null)
+                                Icon(
+                                    ImageVector.vectorResource(id = R.drawable.add_photo_alternate_24dp_fill0_wght400_grad0_opsz24),
+                                    null
+                                )
                             }
                         }
 
@@ -128,7 +136,10 @@ fun GalleryPhotosScreen(
                                         speedDialState = SpeedDialState.Collapsed
                                     },
                                 ) {
-                                    Icon(Icons.Default.Camera, null)
+                                    Icon(
+                                        ImageVector.vectorResource(id = R.drawable.add_a_photo_24dp_fill0_wght400_grad0_opsz24),
+                                        null
+                                    )
                                 }
                             }
                     }

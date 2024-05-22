@@ -11,15 +11,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,12 +31,16 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilterSettings
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditDitheringFilterScreen(
     photoPreview: ImageBitmap,
@@ -119,10 +123,13 @@ fun EditDitheringFilterScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.secondary)
+                        .background(MaterialTheme.colorScheme.secondary)
                 ) {
                     IconButton(onClick = onCancelPress) {
-                        Icon(Icons.Default.DeleteForever, null)
+                        Icon(
+                            ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                            null
+                        )
                     }
 
                     IconButton(onClick = onDonePress, enabled = !isProcessingRunning) {
