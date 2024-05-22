@@ -18,7 +18,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.AirplaneTicket
-import androidx.compose.material.icons.automirrored.filled.Announcement
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -41,13 +40,12 @@ import com.pokhuimand.photoeditor.components.SelectableIconButton
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.Filters
-import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilter
-import com.pokhuimand.photoeditor.filters.impl.DitheringFilter
-import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
-import com.pokhuimand.photoeditor.filters.impl.NothingFilter
-import com.pokhuimand.photoeditor.filters.impl.PixelSortingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
 
 @Composable
 fun EditSelectFilterScreen(

@@ -1,12 +1,11 @@
 package com.pokhuimand.photoeditor.filters
 
-import com.pokhuimand.photoeditor.filters.impl.ContrastAndBrightnessFilter
-import com.pokhuimand.photoeditor.filters.impl.DitheringFilter
-import com.pokhuimand.photoeditor.filters.impl.GrayscaleFilter
-import com.pokhuimand.photoeditor.filters.impl.NothingFilter
-import com.pokhuimand.photoeditor.filters.impl.PixelSortingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
-import com.pokhuimand.photoeditor.filters.impl.UnsharpMaskingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
 
 object Filters {
     val implementations: Set<Filter> =

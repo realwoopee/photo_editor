@@ -1,7 +1,6 @@
-package com.pokhuimand.photoeditor.filters.impl
+package com.pokhuimand.photoeditor.filters.impl.colorcorrection
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
