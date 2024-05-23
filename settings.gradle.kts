@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Photo Editor"
 include(":app")
+include(":opencv")

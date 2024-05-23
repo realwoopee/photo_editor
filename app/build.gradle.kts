@@ -76,4 +76,5 @@ dependencies {
     //implementation("androidx.compose.material:material-icons-extended")
 
     implementation(libs.speed.dial.compose)
+    implementation(project(":opencv"))
 }
