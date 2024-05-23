@@ -23,7 +23,6 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,10 +36,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilterSettings
@@ -108,12 +109,7 @@ fun EditResizeFilterScreen(
                         .wrapContentWidth()
                         .align(Alignment.CenterHorizontally)
                 ) {
-
-
-
-
                 }
-
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
@@ -126,7 +122,7 @@ fun EditResizeFilterScreen(
                         singleLine=true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         onValueChange = {
-                            text = it
+                            text = it.replace(",", ".", false)
                             timer.cancel()
                             timer = Timer()
                             try {
@@ -148,7 +144,10 @@ fun EditResizeFilterScreen(
                         .background(MaterialTheme.colors.secondary)
                 ) {
                     IconButton(onClick = onCancelPress) {
-                        Icon(Icons.Default.DeleteForever, null)
+                        androidx.compose.material3.Icon(
+                            painter = painterResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                            null,
+                        )
                     }
 
                     IconButton(onClick = onDonePress, enabled = !isProcessingRunning) {

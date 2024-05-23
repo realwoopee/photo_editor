@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,11 +23,15 @@ class ResizeFilter : Filter {
     override val id: String = "resize"
     override val category: FilterCategory = FilterCategory.CropResize
 
-    override suspend fun applyDefaults(image: Bitmap): Bitmap {
-        return apply(image, ResizeFilterSettings.default)
+    override suspend fun applyDefaults(image: Bitmap, cache: FilterDataCache): Bitmap {
+        return apply(image, ResizeFilterSettings.default, cache)
     }
 
-    override suspend fun apply(image: Bitmap, settings: FilterSettings): Bitmap {
+    override suspend fun apply(
+        image: Bitmap,
+        settings: FilterSettings,
+        cache: FilterDataCache
+    ): Bitmap {
         val sets = settings as ResizeFilterSettings
         return withContext(Dispatchers.Default) {
             resize(
