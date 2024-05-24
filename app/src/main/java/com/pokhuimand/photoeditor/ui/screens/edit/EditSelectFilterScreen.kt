@@ -52,6 +52,7 @@ import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.SepiaFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.TempAndTintFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
 
@@ -131,6 +132,7 @@ fun EditSelectFilterScreen(
                                                 is UnsharpMaskingFilter -> R.drawable.deblur_24dp_fill0_wght400_grad0_opsz24
                                                 is RotateFilter -> R.drawable.autorenew_24dp_fill0_wght400_grad0_opsz24
                                                 is GrayscaleFilter -> R.drawable.monochrome_photos_24dp_fill0_wght400_grad0_opsz24
+                                                is SepiaFilter -> R.drawable.elderly_woman_24dp_fill0_wght400_grad0_opsz24
                                                 is DitheringFilter -> R.drawable.transition_fade_24dp_fill0_wght400_grad0_opsz24
                                                 is ContrastAndBrightnessFilter -> R.drawable.baseline_invert_colors_24
                                                 is ResizeFilter -> R.drawable.resize_24dp_fill0_wght400_grad0_opsz24

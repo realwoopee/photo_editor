@@ -40,7 +40,7 @@ data class TempAndTintFilterSettings(
 }
 
 class TempAndTintFilter : Filter {
-    override val id: String = "contrast-and-brightness"
+    override val id: String = "temp-and-tint"
     override val category: FilterCategory = FilterCategory.ColorCorrection
 
     override suspend fun applyDefaults(image: Bitmap, cache: FilterDataCache): Bitmap {

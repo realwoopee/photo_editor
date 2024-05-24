@@ -1,20 +1,16 @@
 package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import android.graphics.Color
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
 
 
 @Composable
-fun EditGrayscaleFilterScreen(
+fun EditDumbFilterScreen(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
@@ -47,7 +43,7 @@ fun EditGrayscaleFilterScreenPreview() {
         height,
         Bitmap.Config.ARGB_8888
     ).asImageBitmap()
-    EditGrayscaleFilterScreen(
+    EditDumbFilterScreen(
         photoPreview = bitmap,
         isProcessingRunning = false,
         onBackPress = { },

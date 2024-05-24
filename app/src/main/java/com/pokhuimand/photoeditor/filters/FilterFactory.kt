@@ -8,6 +8,7 @@ import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBright
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.SepiaFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.TempAndTintFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
 
@@ -16,6 +17,7 @@ class FilterFactory(private val appContainer: AppContainer) {
         UnsharpMaskingFilter(),
         RotateFilter(),
         GrayscaleFilter(),
+        SepiaFilter(),
         DitheringFilter(),
         ContrastAndBrightnessFilter(),
         TempAndTintFilter(),

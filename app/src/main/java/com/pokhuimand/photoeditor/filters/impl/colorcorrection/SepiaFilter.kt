@@ -1,12 +1,7 @@
 package com.pokhuimand.photoeditor.filters.impl.colorcorrection
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
-import android.util.Log
 import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
@@ -19,16 +14,12 @@ import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.cancellation.CancellationException
-import kotlin.system.measureTimeMillis
 
-class GrayscaleFilter : Filter {
-    override val id: String = "grayscale"
+class SepiaFilter : Filter {
+    override val id: String = "sepia"
     override val category: FilterCategory = FilterCategory.ColorCorrection
 
     override suspend fun applyDefaults(image: Bitmap, cache: FilterDataCache): Bitmap {
@@ -43,7 +34,7 @@ class GrayscaleFilter : Filter {
         return withContext(Dispatchers.Default) {
             return@withContext asyncChunked(
                 image
-            ) { grayscale(it) }
+            ) { sepia(it) }
         }
     }
 
@@ -79,11 +70,29 @@ class GrayscaleFilter : Filter {
             return@coroutineScope result
         }
 
-    private fun grayscale(pixel: Int): Int {
+    private fun sepia(pixel: Int): Int {
         val alpha = pixel.alpha
 
-        val gray = (0.3 * pixel.red + 0.59 * pixel.green + 0.11 * pixel.blue).toInt()
-        return Color.argb(alpha, gray, gray, gray)
+        val l = (0.3 * pixel.red + 0.59 * pixel.green + 0.11 * pixel.blue)
+        val r =
+            (0.393 * pixel.red + 0.769 * pixel.green + 0.189 * pixel.blue)
+        val g =
+            (0.349 * pixel.red + 0.686 * pixel.green + 0.168 * pixel.blue)
+        val b =
+            (0.272 * pixel.red + 0.534 * pixel.green + 0.131 * pixel.blue)
+
+        val rg = r - g
+        val gb = g - b
+        val ar = rg * 0.7 + gb * 0.11
+        val ag = ar - rg
+        val ab = ar - rg - gb
+
+        return Color.argb(
+            alpha,
+            (l + ar).toInt().coerceIn(0, 255),
+            (l + ag).toInt().coerceIn(0, 255),
+            (l + ab).toInt().coerceIn(0, 255)
+        )
     }
 
 }

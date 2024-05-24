@@ -15,10 +15,11 @@ import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFil
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFaceRecognitionScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditContrastAndBrightnessFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditDitheringFilterScreen
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditGrayscaleFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditDumbFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditNothingFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditPixelSortingFilterScreen
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
+import com.pokhuimand.photoeditor.filters.impl.colorcorrection.SepiaFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.TempAndTintFilter
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditTempAndTintFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.cropresize.EditResizeFilterScreen
@@ -39,8 +40,8 @@ fun EditRoute(viewModel: EditViewModel) {
             )
         }
 
-        is GrayscaleFilter -> {
-            EditGrayscaleFilterScreen(
+        is GrayscaleFilter, is SepiaFilter -> {
+            EditDumbFilterScreen(
                 photoPreview = uiState.photo.asImageBitmap(),
                 isProcessingRunning = uiState.isProcessingRunning,
                 onBackPress = viewModel::onBackPress,
