@@ -20,7 +20,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,6 +76,7 @@ fun EditRotateFilterScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentSize()
+                    .background(Color.Red)
             ) {
                 Image(
                     bitmap = photoPreview,
@@ -103,15 +106,14 @@ fun EditRotateFilterScreen(
                 ) {
                     IconButton(onClick = {
                         filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees + 180).mod(360.0)).toFloat() - 90f)
+                            filterSettings.copy(degrees = ((filterSettings.degrees).mod(360.0)).toFloat() - 90f)
                         onFilterSettingsUpdate(filterSettings)
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_cw_24dp_fill0_wght400_grad0_opsz24),
-                            null
+                            painter = painterResource(id = R.drawable.rotate_90_degrees_ccw_24dp_fill0_wght400_grad0_opsz24),
+                            null,
                         )
                     }
-
                     IconButton(onClick = {
                         filterSettings =
                             filterSettings.copy(degrees = 0f)
@@ -122,16 +124,22 @@ fun EditRotateFilterScreen(
                             null,
                         )
                     }
-
                     IconButton(onClick = {
                         filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees).mod(360.0)).toFloat() - 90f)
+                            filterSettings.copy(degrees = ((filterSettings.degrees + 180).mod(360.0)).toFloat() - 90f)
                         onFilterSettingsUpdate(filterSettings)
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_ccw_24dp_fill0_wght400_grad0_opsz24),
-                            null,
+                            painter = painterResource(id = R.drawable.rotate_90_degrees_cw_24dp_fill0_wght400_grad0_opsz24),
+                            null
                         )
+                    }
+                    Button(onClick = {
+                        filterSettings =
+                            filterSettings.copy(degrees = -0.18f)
+                        onFilterSettingsUpdate(filterSettings)
+                    }) {
+                        Text("TEST")
                     }
                 }
 

@@ -1,6 +1,5 @@
 package com.pokhuimand.photoeditor.ui.screens.edit.filters
 
-import android.R.attr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,16 +13,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,18 +37,15 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
-import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilterSettings
 import java.util.Timer
 import kotlin.concurrent.schedule
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditResizeFilterScreen(
     //подсчитать resolution, расситывать max.coefficient
@@ -82,6 +79,7 @@ fun EditResizeFilterScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentSize()
+                    .background(Color.Red)
             ) {
                 Image(
                     bitmap = photoPreview,
@@ -119,7 +117,7 @@ fun EditResizeFilterScreen(
                     var text by remember { mutableStateOf("1.0") }
                     TextField(
                         value = text,
-                        singleLine=true,
+                        singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         onValueChange = {
                             text = it.replace(",", ".", false)
@@ -127,12 +125,13 @@ fun EditResizeFilterScreen(
                             timer = Timer()
                             try {
                                 filterSettings = filterSettings.copy(coefficient = text.toFloat())
-                            }catch (e: NumberFormatException) {}
-
-                            timer.schedule(1000) {
-                                onFilterSettingsUpdate(filterSettings)
+                                if (filterSettings.coefficient > 0)
+                                    timer.schedule(1000) {
+                                        onFilterSettingsUpdate(filterSettings)
+                                    }
+                            } catch (_: NumberFormatException) {
                             }
-                                        },
+                        },
                         label = { Text("Enter coefficient:") }
                     )
 
@@ -141,7 +140,7 @@ fun EditResizeFilterScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.secondary)
+                        .background(MaterialTheme.colorScheme.secondary)
                 ) {
                     IconButton(onClick = onCancelPress) {
                         androidx.compose.material3.Icon(
