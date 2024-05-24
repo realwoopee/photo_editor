@@ -1,6 +1,7 @@
 package com.pokhuimand.photoeditor.filters
 
 import com.pokhuimand.photoeditor.data.AppContainer
+import com.pokhuimand.photoeditor.filters.impl.AffineTransformation
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
 import com.pokhuimand.photoeditor.filters.impl.FaceRecognition
@@ -23,6 +24,7 @@ class FilterFactory(private val appContainer: AppContainer) {
         TempAndTintFilter(),
         PixelSortingFilter(),
         ResizeFilter(),
-        FaceRecognition(appContainer.modelLoader.modelFilePath)
+        FaceRecognition(appContainer.modelLoader.modelFilePath),
+        AffineTransformation()
     )
 }

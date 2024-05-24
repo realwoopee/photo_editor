@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pokhuimand.photoeditor.filters.impl.AffineTransformation
 import com.pokhuimand.photoeditor.filters.impl.FaceRecognition
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
@@ -21,10 +22,11 @@ import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditPi
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.SepiaFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.TempAndTintFilter
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditAffineTransformationScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditTempAndTintFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditUnsharpMaskingFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.cropresize.EditResizeFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.cropresize.EditRotateFilterScreen
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditUnsharpMaskingFilterScreen
 
 @Composable
 fun EditRoute(viewModel: EditViewModel) {
@@ -140,6 +142,17 @@ fun EditRoute(viewModel: EditViewModel) {
 
         is FaceRecognition -> {
             EditFaceRecognitionScreen(
+                photoPreview = uiState.photo.asImageBitmap(),
+                isProcessingRunning = uiState.isProcessingRunning,
+                onBackPress = viewModel::onBackPress,
+                onCancelPress = { viewModel.onFilterSelect(null) },
+                onDonePress = viewModel::onFilterApply,
+                onFilterSettingsUpdate = viewModel::onFilterSettingsUpdate
+            )
+        }
+
+        is AffineTransformation -> {
+            EditAffineTransformationScreen(
                 photoPreview = uiState.photo.asImageBitmap(),
                 isProcessingRunning = uiState.isProcessingRunning,
                 onBackPress = viewModel::onBackPress,
