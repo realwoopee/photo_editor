@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
@@ -70,14 +73,16 @@ fun EditFilterScreenBase(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
                 }) {
                 Image(
                     bitmap = photoPreview,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
+                        .aspectRatio(photoPreview.width.toFloat() / photoPreview.height)
                         .fillMaxSize()
-                        .align(Alignment.TopCenter),
+                        .align(Alignment.Center),
                     colorFilter = if (isProcessingRunning) ColorFilter.tint(
                         Color.LightGray.copy(alpha = 0.3f),
                         BlendMode.SrcOver

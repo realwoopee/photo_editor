@@ -15,7 +15,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -28,7 +31,7 @@ data class ResizeFilterSettings(
     object Ranges {
         val coefficient = 0.01f..3f
     }
-    
+
     companion object {
         val default = ResizeFilterSettings(1.0f)
     }
@@ -86,6 +89,8 @@ class ResizeFilter : Filter {
                             newWidth * newHeight
                         )
                     for (i in start until stop) {
+                        ensureActive()
+
                         val y = i / newWidth
                         val x = i - newWidth * y
 
@@ -97,7 +102,7 @@ class ResizeFilter : Filter {
                     }
                 }
             }
-
+            ensureActive()
             jobs.awaitAll()
             return@coroutineScope arrayToBitmap(resultArray)
         }
@@ -190,6 +195,9 @@ class ResizeFilter : Filter {
                             newWidth * newHeight
                         )
                     for (i in start until stop) {
+                        if (!isActive)
+                            throw CancellationException()
+
                         val y = i / newWidth
                         val x = i - newWidth * y
                         val u = (x.toDouble()) / (newWidth - 1)

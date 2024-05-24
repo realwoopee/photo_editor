@@ -9,8 +9,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.exp
@@ -98,6 +101,8 @@ class UnsharpMaskingFilter : Filter {
                 .chunked(height * width / Runtime.getRuntime().availableProcessors()).map { chunk ->
                     async {
                         chunk.map { (x, y) ->
+                            ensureActive()
+
                             var a = 0.0
                             var r = 0.0
                             var g = 0.0
@@ -143,7 +148,10 @@ class UnsharpMaskingFilter : Filter {
         val width = image.width
         val height = image.height
         val imageData = IntArray(width * height)
+
+        ensureActive()
         image.getPixels(imageData, 0, width, 0, 0, width, height)
+
         val blurredImageData = gaussianBlurAsync(imageData, width, height, radius)
         val sharpenedImageData = IntArray(imageData.size)
 
@@ -152,6 +160,8 @@ class UnsharpMaskingFilter : Filter {
             .chunked(width * height / Runtime.getRuntime().availableProcessors()).map { chunk ->
                 launch {
                     chunk.forEach { (x, y) ->
+                        ensureActive()
+
                         val rgbOriginal = imageData[y * width + x]
                         val rgbBlurred = blurredImageData[y * width + x]
 
@@ -184,9 +194,14 @@ class UnsharpMaskingFilter : Filter {
                 }
             }
 
+        ensureActive()
         jobs.forEach { it.join() }
+
         val sharpenedImage = Bitmap.createBitmap(width, height, image.config)
+
+        ensureActive()
         sharpenedImage.setPixels(sharpenedImageData, 0, width, 0, 0, width, height)
+
         return@coroutineScope sharpenedImage
     }
 }

@@ -2,6 +2,7 @@ package com.pokhuimand.photoeditor.ui.screens.edit
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,12 +10,16 @@ import com.pokhuimand.photoeditor.data.photos.PhotosRepository
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class EditViewModel(
     private val photoId: String,
@@ -27,9 +32,14 @@ class EditViewModel(
         MutableStateFlow(
             EditViewModelState(
                 photoId, BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
+                BitmapFactory.decodeFile(
+                    photosRepository.getPhoto(photoId).uri.path,
+                    BitmapFactory.Options().apply {
+                        inMutable = false
+                    }),
                 null,
                 null,
-                false
+                null
             )
         )
 
@@ -70,42 +80,52 @@ class EditViewModel(
             it.copy(
                 filter = filter,
                 filterCache = filter?.buildCache(),
-                preview = BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path)
+                preview = it.source
             )
         }
         if (filter != null)
             viewModelScope.launch {
-                _state.update { it.copy(isProcessingRunning = true) }
+                _state.value.runningJob?.cancelAndJoin()
                 _state.update {
-                    if (it.filter != null)
-                        it.copy(
-                            preview = keyedFilters[filter.id]!!.applyDefaults(
-                                BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
-                                it.filterCache!!
-                            ),
-                            isProcessingRunning = false
-                        )
-                    else
-                        it
+                    _state.value.copy(runningJob = launch {
+                        _state.update {
+                            if (it.filter != null)
+                                it.copy(
+                                    preview = keyedFilters[it.filter.id]!!.applyDefaults(
+                                        it.source,
+                                        it.filterCache!!
+                                    ),
+                                    runningJob = null
+                                )
+                            else
+                                it.copy(runningJob = null)
+                        }
+                    })
                 }
             }
     }
 
     fun onFilterSettingsUpdate(filterSettings: FilterSettings) {
         viewModelScope.launch {
-            _state.update { it.copy(isProcessingRunning = true) }
+            _state.value.runningJob?.cancelAndJoin()
             _state.update {
-                if (it.filter != null)
-                    it.copy(
-                        preview = keyedFilters[it.filter.id]!!.apply(
-                            BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
+                _state.value.copy(runningJob = launch {
+                    if (it.filter != null) {
+                        if (!isActive) {
+                            _state.update { it.copy(runningJob = null) }
+                            return@launch
+                        }
+                        val newPhoto = keyedFilters[it.filter.id]!!.apply(
+                            it.source,
                             filterSettings,
                             it.filterCache!!
-                        ),
-                        isProcessingRunning = false
-                    )
-                else
-                    it
+                        )
+                        if (isActive) {
+                            _state.update { it.copy(preview = newPhoto) }
+                        }
+                    }
+                    _state.update { it.copy(runningJob = null) }
+                })
             }
         }
     }
@@ -135,30 +155,22 @@ class EditViewModel(
 
 private data class EditViewModelState(
     val photoId: String,
+    val source: Bitmap,
     val preview: Bitmap,
     val filter: Filter?,
     val filterCache: FilterDataCache?,
-    val isProcessingRunning: Boolean
+    val runningJob: Job?
 ) {
     fun toUiState(): EditUiState.HasPhoto =
         EditUiState.HasPhoto(
             photo = preview,
             filter = filter,
-            isProcessingRunning = isProcessingRunning,
-            originalSize = Pair(preview.width, preview.height)
+            isProcessingRunning = runningJob != null,
+            originalSize = Pair(source.width, source.height)
         )
-
 }
 
 sealed class EditUiState {
-
-    sealed class FiltersUiState {
-        data object NoFilter : FiltersUiState()
-
-        data class SelectedFilter(val filterId: String) :
-            FiltersUiState()
-    }
-
     data class HasPhoto(
         val photo: Bitmap,
         val isProcessingRunning: Boolean = false,

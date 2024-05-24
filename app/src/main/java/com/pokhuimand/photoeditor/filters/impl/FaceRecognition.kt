@@ -7,6 +7,9 @@ import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.opencv.android.Utils
 import org.opencv.core.Mat
@@ -14,6 +17,7 @@ import org.opencv.core.MatOfRect
 import org.opencv.core.Rect
 import org.opencv.core.Size
 import org.opencv.objdetect.CascadeClassifier
+import kotlin.coroutines.cancellation.CancellationException
 
 
 data class FaceRecognitionSettings(
@@ -60,14 +64,19 @@ class FaceRecognition(private val pathToModel: String) : Filter {
         }
     }
 
-    private fun detectFaces(source: Bitmap, rectBorderWidth: Int): Bitmap {
+    private suspend fun detectFaces(source: Bitmap, rectBorderWidth: Int): Bitmap = coroutineScope {
         val faceDetections = MatOfRect()
 
         val sourceMat = Mat()
         Utils.bitmapToMat(source, sourceMat)
 
         val cascadeClassifier = CascadeClassifier()
+
+        ensureActive()
+
         cascadeClassifier.load(pathToModel)
+
+        ensureActive()
 
         cascadeClassifier.detectMultiScale(
             sourceMat,
@@ -82,12 +91,16 @@ class FaceRecognition(private val pathToModel: String) : Filter {
             Size()
         )
 
+        ensureActive()
+
         val srcArray = bitmapTo2DArray(source)
 
         for (rect in faceDetections.toList()) {
+            ensureActive()
+
             drawRect(rect, srcArray, rectBorderWidth)
         }
-        return arrayToBitmap(srcArray)
+        return@coroutineScope arrayToBitmap(srcArray)
     }
 
     override suspend fun apply(

@@ -6,7 +6,11 @@ import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterSettings
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 data class DitheringFilterSettings(val levels: Int, val errorMultiplier: Double) :
@@ -57,15 +61,14 @@ class DitheringFilter : Filter {
         doubleArrayOf(0.0, 2.0 / 32.0, 3.0 / 32.0, 2.0 / 32.0, 0.0)
     )
 
-    private fun applyColorDitheringFilter(
+    private suspend fun applyColorDitheringFilter(
         source: Bitmap,
         ditherFilter: Array<DoubleArray>,
         levels: Int,
         errorMultiplier: Double = 1.0
-    ): Bitmap {
+    ): Bitmap = coroutineScope {
         val width = source.width
         val height = source.height
-        val resultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 
         val pixels = IntArray(width * height)
         source.getPixels(pixels, 0, width, 0, 0, width, height)
@@ -79,6 +82,8 @@ class DitheringFilter : Filter {
 
         for (y in 0 until height) {
             for (x in 0 until width) {
+                ensureActive()
+
                 var r = Color.red(pixels[y * width + x]).toDouble()
                 var g = Color.green(pixels[y * width + x]).toDouble()
                 var b = Color.blue(pixels[y * width + x]).toDouble()
@@ -108,10 +113,13 @@ class DitheringFilter : Filter {
             }
         }
 
-
+        ensureActive()
+        val resultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        
+        ensureActive()
         resultBitmap.setPixels(pixels, 0, width, 0, 0, width, height)
 
-        return resultBitmap
+        return@coroutineScope resultBitmap
     }
 
 }

@@ -13,8 +13,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.round
@@ -73,7 +76,6 @@ class ContrastAndBrightnessFilter : Filter {
             val height = bitmap.height
             val buffer = IntArray(bitmap.height * bitmap.width)
             bitmap.getPixels(buffer, 0, width, 0, 0, width, height)
-            val result = Bitmap.createBitmap(width, height, bitmap.config)
 
             if (cache.medianValue == -1.0f)
                 cache.medianValue = medianValue(buffer)
@@ -88,6 +90,7 @@ class ContrastAndBrightnessFilter : Filter {
                     .map { chunk ->
                         async {
                             chunk.map { i ->
+                                ensureActive()
                                 // java sucks. this is the optimized way
                                 val pixel = buffer[i]
                                 val r = pixel.red / 255.0
@@ -170,8 +173,11 @@ class ContrastAndBrightnessFilter : Filter {
                         }
                     }
 
+            ensureActive()
             deferredPixels.awaitAll()
-
+            
+            ensureActive()
+            val result = Bitmap.createBitmap(width, height, bitmap.config)
             result.setPixels(buffer, 0, width, 0, 0, width, height)
 
             return@coroutineScope result

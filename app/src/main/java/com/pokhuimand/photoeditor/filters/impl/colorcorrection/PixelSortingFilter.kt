@@ -8,10 +8,13 @@ import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterSettings
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 enum class SortDirection {
@@ -101,6 +104,7 @@ class PixelSortingFilter : Filter {
                 SortDirection.Left -> sortHorizontal(buffer, width, cache.mask)
             }
 
+            ensureActive()
             result.setPixels(buffer, 0, width, 0, 0, width, height)
 
             return@coroutineScope result
@@ -117,6 +121,8 @@ class PixelSortingFilter : Filter {
             val jobs = (0 until width).flatMap { x ->
                 (0 until height)
                     .fold(emptyList<MutableList<Int>>().toMutableList()) { acc, y ->
+                        ensureActive()
+
                         if (mask[y * width + x]) {
                             if (acc.isEmpty())
                                 acc.add(emptyList<Int>().toMutableList())
@@ -138,6 +144,8 @@ class PixelSortingFilter : Filter {
                                         val value = max
                                         return@sortedBy value
                                     }.forEachIndexed { i, (_, pixel) ->
+                                        ensureActive()
+
                                         buffer[subLine[i]] = pixel
                                     }
                             else
@@ -150,12 +158,15 @@ class PixelSortingFilter : Filter {
                                         val value = max
                                         return@sortedByDescending value
                                     }.forEachIndexed { i, (_, pixel) ->
+                                        ensureActive()
+
                                         buffer[subLine[i]] = pixel
                                     }
                         }
                     }
             }
 
+            ensureActive()
             jobs.awaitAll()
         }
 
@@ -169,6 +180,8 @@ class PixelSortingFilter : Filter {
             val jobs = mask.indices.chunked(width).flatMapIndexed { y, line ->
                 line
                     .fold(emptyList<MutableList<Int>>().toMutableList()) { acc, i ->
+                        ensureActive()
+
                         if (mask[i]) {
                             if (acc.isEmpty())
                                 acc.add(emptyList<Int>().toMutableList())
@@ -191,6 +204,8 @@ class PixelSortingFilter : Filter {
                                         val value = max
                                         return@sortedBy value
                                     }.forEachIndexed { i, pixel ->
+                                        ensureActive()
+
                                         buffer[y * width + startIndex + i] = pixel
                                     }
                             else
@@ -204,12 +219,15 @@ class PixelSortingFilter : Filter {
                                         val value = max
                                         return@sortedByDescending value
                                     }.forEachIndexed { i, pixel ->
+                                        ensureActive()
+
                                         buffer[y * width + startIndex + i] = pixel
                                     }
                         }
                     }
             }
 
+            ensureActive()
             jobs.awaitAll()
         }
 
@@ -223,6 +241,8 @@ class PixelSortingFilter : Filter {
             .map { chunk ->
                 async {
                     chunk.forEach { i ->
+                        ensureActive()
+
                         val pixel = image[i]
                         val r = pixel.red / 255.0
                         val g = pixel.green / 255.0

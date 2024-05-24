@@ -19,8 +19,12 @@ import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.system.measureTimeMillis
 
 data class GrayscaleFilterSettings(
@@ -75,6 +79,7 @@ class GrayscaleFilter : Filter {
                     .map { chunk ->
                         async {
                             chunk.map { i ->
+                                ensureActive()
                                 buffer[i] = filter(buffer[i])
                             }
                         }
