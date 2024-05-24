@@ -30,7 +30,8 @@ fun EditRoute(viewModel: EditViewModel) {
             EditSelectFilterScreen(
                 photoPreview = uiState.photo.asImageBitmap(),
                 onBackPress = { viewModel.onBackPress() },
-                onFilterSelect = viewModel::onFilterSelect
+                onFilterSelect = viewModel::onFilterSelect,
+                filters = viewModel.filters
             )
         }
 

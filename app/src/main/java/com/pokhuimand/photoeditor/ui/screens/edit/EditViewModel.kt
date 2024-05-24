@@ -21,7 +21,8 @@ class EditViewModel(
     private val photoId: String,
     private val photosRepository: PhotosRepository,
     private val navigateBack: () -> Unit,
-    private val onPhotoSave: (Bitmap) -> Unit
+    private val onPhotoSave: (Bitmap) -> Unit,
+    val filters: Set<Filter>
 ) : ViewModel() {
     private val _state =
         MutableStateFlow(
@@ -32,10 +33,15 @@ class EditViewModel(
                 false
             )
         )
+
     val uiState = _state.map(EditViewModelState::toUiState)
         .stateIn(viewModelScope, SharingStarted.Eagerly, _state.value.toUiState())
 
+    private val keyedFilters = filters.associateBy { it.id }
+
     init {
+
+
         viewModelScope.launch {
             photosRepository.observePhotos().collect() { it ->
                 _state.update {
@@ -74,7 +80,7 @@ class EditViewModel(
                 _state.update {
                     if (it.filter != null)
                         it.copy(
-                            preview = Filters.keyedImplementations[filter.id]!!.applyDefaults(
+                            preview = keyedFilters[filter.id]!!.applyDefaults(
                                 BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
                                 it.filterCache!!
                             ),
@@ -92,7 +98,7 @@ class EditViewModel(
             _state.update {
                 if (it.filter != null)
                     it.copy(
-                        preview = Filters.keyedImplementations[it.filter.id]!!.apply(
+                        preview = keyedFilters[it.filter.id]!!.apply(
                             BitmapFactory.decodeFile(photosRepository.getPhoto(photoId).uri.path),
                             filterSettings,
                             it.filterCache!!
@@ -111,11 +117,18 @@ class EditViewModel(
             photosRepository: PhotosRepository,
             navigateBack: () -> Unit,
             onPhotoSave: (Bitmap) -> Unit,
+            filters: Set<Filter>
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return EditViewModel(photoId, photosRepository, navigateBack, onPhotoSave) as T
+                    return EditViewModel(
+                        photoId,
+                        photosRepository,
+                        navigateBack,
+                        onPhotoSave,
+                        filters
+                    ) as T
                 }
             }
     }

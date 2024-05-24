@@ -51,7 +51,8 @@ import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFil
 fun EditSelectFilterScreen(
     photoPreview: ImageBitmap,
     onBackPress: () -> Unit,
-    onFilterSelect: (Filter) -> Unit
+    onFilterSelect: (Filter) -> Unit,
+    filters: Set<Filter>
 ) {
     var selectedFilterCategory by remember { mutableStateOf(null as FilterCategory?) }
     Scaffold(topBar = {
@@ -80,7 +81,7 @@ fun EditSelectFilterScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
             ) {
-                if (selectedFilterCategory != null && Filters.implementations.any { filter -> filter.category == selectedFilterCategory })
+                if (selectedFilterCategory != null && filters.any { filter -> filter.category == selectedFilterCategory })
                     Row(
                         modifier = Modifier
                             .padding(bottom = 12.dp)
@@ -91,7 +92,7 @@ fun EditSelectFilterScreen(
                                 shape = RoundedCornerShape(12.dp)
                             )
                     ) {
-                        Filters.implementations.filter { filter -> filter.category == selectedFilterCategory }
+                        filters.filter { filter -> filter.category == selectedFilterCategory }
                             .map { filter ->
                                 SelectableIconButton(
                                     selected = false,
@@ -109,7 +110,7 @@ fun EditSelectFilterScreen(
                                                 is GrayscaleFilter -> R.drawable.monochrome_photos_24dp_fill0_wght400_grad0_opsz24
                                                 is DitheringFilter -> R.drawable.transition_fade_24dp_fill0_wght400_grad0_opsz24
                                                 is ContrastAndBrightnessFilter -> R.drawable.baseline_invert_colors_24
-                                              is ResizeFilter -> R.drawable.resize_24dp_fill0_wght400_grad0_opsz24
+                                                is ResizeFilter -> R.drawable.resize_24dp_fill0_wght400_grad0_opsz24
 
 
                                                 is PixelSortingFilter -> R.drawable.filter_list_24dp_fill0_wght400_grad0_opsz24
