@@ -3,14 +3,18 @@ package com.pokhuimand.photoeditor.filters.impl
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.pokhuimand.photoeditor.filters.Filter
-import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 data class RotateFilterSettings(
@@ -49,7 +53,9 @@ class RotateFilter : Filter {
         }
     }
 
-    private fun rotate(source: Bitmap, degrees: Float): Bitmap {
+    private suspend fun rotate(source: Bitmap, degrees: Float): Bitmap = coroutineScope {
+        //if (degrees % 90 == 0f) return source
+
         val radians = Math.toRadians(degrees.toDouble())
         val sin = sin(radians)
         val cos = cos(radians)
@@ -58,73 +64,97 @@ class RotateFilter : Filter {
         val srcWidth = source.width
         val srcHeight = source.height
 
-        val newWidth = (srcWidth * abs(cos) + srcHeight * abs(sin)).toInt()
-        val newHeight = (srcWidth * abs(sin) + srcHeight * abs(cos)).toInt()
+        val newWidth = (srcWidth * abs(cos) + srcHeight * abs(sin)).roundToInt()
+        val newHeight = (srcWidth * abs(sin) + srcHeight * abs(cos)).roundToInt()
 
         val rotatedArray = Array(newHeight) { IntArray(newWidth) { Color.TRANSPARENT } }
 
-        val centerX = srcWidth / 2
-        val centerY = srcHeight / 2
-        val newCenterX = newWidth / 2
-        val newCenterY = newHeight / 2
+        val centerX = srcWidth / 2.0
+        val centerY = srcHeight / 2.0
+        val newCenterX = newWidth / 2.0
+        val newCenterY = newHeight / 2.0
 
-        for (x in 0 until newWidth) {
-            for (y in 0 until newHeight) {
-                val relativeX = x - newCenterX
-                val relativeY = y - newCenterY
+        val processorCount = Runtime.getRuntime().availableProcessors()
+        val jobs = List(processorCount) { n ->
+            async {
+                val start = n * (newHeight * newWidth / processorCount)
+                val stop =
+                    ((n + 1) * (newHeight * newWidth / processorCount)).coerceAtMost(
+                        newWidth * newHeight
+                    )
+                for (i in start until stop) {
+                    val y = i / newWidth
+                    val x = i - newWidth * y
+                    val relativeX = x + 0.5 - newCenterX
+                    val relativeY = y + 0.5 - newCenterY
 
-                val originalX = (relativeX * cos + relativeY * sin + centerX).toFloat()
-                val originalY = (-relativeX * sin + relativeY * cos + centerY).toFloat()
+                    val originalX = relativeX * cos + relativeY * sin + centerX - 0.5
+                    val originalY = -relativeX * sin + relativeY * cos + centerY - 0.5
 
-                if (originalX >= 0 && originalX < srcWidth - 1 && originalY >= 0 && originalY < srcHeight - 1) {
-                    rotatedArray[y][x] = bilinearInterpolation(srcArray, originalX, originalY)
+                    if (originalX > -1 && originalX < srcWidth && originalY > -1 && originalY < srcHeight) {
+                        rotatedArray[y][x] =
+                            bilinearInterpolation(srcArray, originalX, originalY)
+                    }
                 }
             }
         }
 
-        return arrayToBitmap(rotatedArray)
+        jobs.awaitAll()
+
+        return@coroutineScope arrayToBitmap(rotatedArray)
     }
 
-    private fun bilinearInterpolation(array: Array<IntArray>, x: Float, y: Float): Int {
+    private fun bilinearInterpolation(array: Array<IntArray>, x: Double, y: Double): Int {
         val x1 = floor(x).toInt()
         val y1 = floor(y).toInt()
+
         val x2 = x1 + 1
         val y2 = y1 + 1
 
         // [0, 1]
-        val xFraction = x - x1
-        val yFraction = y - y1
+        val dx = x - x1
+        val dy = y - y1
 
-        val color11 = array[y1][x1]
-        val color12 = array[y1][x2]
-        val color21 = array[y2][x1]
-        val color22 = array[y2][x2]
+        var color11 = Color.TRANSPARENT
+        var color12 = Color.TRANSPARENT
+        var color21 = Color.TRANSPARENT
+        var color22 = Color.TRANSPARENT
 
-        val r = (1 - xFraction) * (1 - yFraction) * Color.red(color11) +
-                xFraction * (1 - yFraction) * Color.red(color12) +
-                (1 - xFraction) * yFraction * Color.red(color21) +
-                xFraction * yFraction * Color.red(color22)
+        if (y1 in array.indices && x1 in array[y1].indices)
+            color11 = array[y1][x1]
+        if (y1 in array.indices && x2 in array[y1].indices)
+            color12 = array[y1][x2]
+        if (y2 in array.indices && x1 in array[y2].indices)
+            color21 = array[y2][x1]
+        if (y2 in array.indices && x2 in array[y2].indices)
+            color22 = array[y2][x2]
 
-        val g = (1 - xFraction) * (1 - yFraction) * Color.green(color11) +
-                xFraction * (1 - yFraction) * Color.green(color12) +
-                (1 - xFraction) * yFraction * Color.green(color21) +
-                xFraction * yFraction * Color.green(color22)
 
-        val b = (1 - xFraction) * (1 - yFraction) * Color.blue(color11) +
-                xFraction * (1 - yFraction) * Color.blue(color12) +
-                (1 - xFraction) * yFraction * Color.blue(color21) +
-                xFraction * yFraction * Color.blue(color22)
+        val r = (1 - dx) * (1 - dy) * Color.red(color11) +
+                dx * (1 - dy) * Color.red(color12) +
+                (1 - dx) * dy * Color.red(color21) +
+                dx * dy * Color.red(color22)
 
-        val alpha = (1 - xFraction) * (1 - yFraction) * Color.alpha(color11) +
-                xFraction * (1 - yFraction) * Color.alpha(color12) +
-                (1 - xFraction) * yFraction * Color.alpha(color21) +
-                xFraction * yFraction * Color.alpha(color22)
+        val g = (1 - dx) * (1 - dy) * Color.green(color11) +
+                dx * (1 - dy) * Color.green(color12) +
+                (1 - dx) * dy * Color.green(color21) +
+                dx * dy * Color.green(color22)
+
+        val b = (1 - dx) * (1 - dy) * Color.blue(color11) +
+                dx * (1 - dy) * Color.blue(color12) +
+                (1 - dx) * dy * Color.blue(color21) +
+                dx * dy * Color.blue(color22)
+
+        val alpha = (1 - dx) * (1 - dy) * Color.alpha(color11) +
+                dx * (1 - dy) * Color.alpha(color12) +
+                (1 - dx) * dy * Color.alpha(color21) +
+                dx * dy * Color.alpha(color22)
 
         return Color.argb(
-            alpha.coerceIn(0f, 255f).toInt(),
-            r.coerceIn(0f, 255f).toInt(),
-            g.coerceIn(0f, 255f).toInt(),
-            b.coerceIn(0f, 255f).toInt()
+            alpha.coerceIn(0.0, 255.0).toInt(),
+            r.coerceIn(0.0, 255.0).toInt(),
+            g.coerceIn(0.0, 255.0).toInt(),
+            b.coerceIn(0.0, 255.0).toInt()
         )
     }
 
@@ -133,9 +163,7 @@ class RotateFilter : Filter {
         val height = source.height
         val result = Array(height) { IntArray(width) }
         for (y in 0 until height) {
-            for (x in 0 until width) {
-                result[y][x] = source.getPixel(x, y)
-            }
+            source.getPixels(result[y], 0, width, 0, y, width, 1)
         }
         return result
     }
@@ -145,9 +173,7 @@ class RotateFilter : Filter {
         val width = array[0].size
         val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         for (y in 0 until height) {
-            for (x in 0 until width) {
-                result.setPixel(x, y, array[y][x])
-            }
+            result.setPixels(array[y], 0, width, 0, y, width, 1)
         }
         return result
     }

@@ -1,5 +1,7 @@
 package com.pokhuimand.photoeditor.filters
 
+
+import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
@@ -15,7 +17,8 @@ object Filters {
             GrayscaleFilter(),
             DitheringFilter(),
             ContrastAndBrightnessFilter(),
-            PixelSortingFilter()
+            PixelSortingFilter(),
+            ResizeFilter()
         )
     var keyedImplementations = implementations.associateBy { f -> f.id }
     val keys = implementations.map { f -> f.id }.toSet()

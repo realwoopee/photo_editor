@@ -12,17 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,29 +35,31 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.KeyboardType
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
-import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
+import com.pokhuimand.photoeditor.filters.impl.ResizeFilterSettings
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditRotateFilterScreen(
+fun EditResizeFilterScreen(
+    //подсчитать resolution, расситывать max.coefficient
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
     onCancelPress: () -> Unit,
-    onFilterSettingsUpdate: (RotateFilterSettings) -> Unit
+    onFilterSettingsUpdate: (ResizeFilterSettings) -> Unit
 ) {
     var filterSettings by remember {
-        mutableStateOf(RotateFilterSettings.default)
+        mutableStateOf(ResizeFilterSettings.default)
     }
+    var timer = Timer()
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
         TopAppBar(title = { },
@@ -104,64 +107,34 @@ fun EditRotateFilterScreen(
                         .wrapContentWidth()
                         .align(Alignment.CenterHorizontally)
                 ) {
-                    IconButton(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees).mod(360.0)).toFloat() - 90f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_ccw_24dp_fill0_wght400_grad0_opsz24),
-                            null,
-                        )
-                    }
-                    IconButton(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = 0f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
-                            null,
-                        )
-                    }
-                    IconButton(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = ((filterSettings.degrees + 180).mod(360.0)).toFloat() - 90f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.rotate_90_degrees_cw_24dp_fill0_wght400_grad0_opsz24),
-                            null
-                        )
-                    }
-                    Button(onClick = {
-                        filterSettings =
-                            filterSettings.copy(degrees = -0.18f)
-                        onFilterSettingsUpdate(filterSettings)
-                    }) {
-                        Text("TEST")
-                    }
                 }
-
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .wrapContentWidth()
                         .align(Alignment.CenterHorizontally)
                 ) {
-                    SliderWithLabelAndValue(
-                        value = (filterSettings.degrees),
+                    var text by remember { mutableStateOf("1.0") }
+                    TextField(
+                        value = text,
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         onValueChange = {
-                            filterSettings =
-                                filterSettings.copy(degrees = it)
+                            text = it.replace(",", ".", false)
+                            timer.cancel()
+                            timer = Timer()
+                            try {
+                                filterSettings = filterSettings.copy(coefficient = text.toFloat())
+                                if (filterSettings.coefficient > 0)
+                                    timer.schedule(1000) {
+                                        onFilterSettingsUpdate(filterSettings)
+                                    }
+                            } catch (_: NumberFormatException) {
+                            }
                         },
-                        onValueChangeFinished = {
-                            onFilterSettingsUpdate(filterSettings)
-                        },
-                        valueRange = RotateFilterSettings.Ranges.degrees,
-                        label = "Degrees",
-                        valueFormat = { String.format("%.2f°", it) }
+                        label = { Text("Enter coefficient:") }
                     )
+
                 }
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -170,9 +143,9 @@ fun EditRotateFilterScreen(
                         .background(MaterialTheme.colorScheme.secondary)
                 ) {
                     IconButton(onClick = onCancelPress) {
-                        Icon(
-                            ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
-                            null
+                        androidx.compose.material3.Icon(
+                            painter = painterResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                            null,
                         )
                     }
 
@@ -185,4 +158,7 @@ fun EditRotateFilterScreen(
     }
 
 }
+
+
+
 

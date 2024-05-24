@@ -43,6 +43,7 @@ import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilter
 import com.pokhuimand.photoeditor.filters.impl.RotateFilter
+import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,6 +109,7 @@ fun EditSelectFilterScreen(
                                                 is GrayscaleFilter -> R.drawable.monochrome_photos_24dp_fill0_wght400_grad0_opsz24
                                                 is DitheringFilter -> R.drawable.transition_fade_24dp_fill0_wght400_grad0_opsz24
                                                 is ContrastAndBrightnessFilter -> R.drawable.baseline_invert_colors_24
+                                              is ResizeFilter -> R.drawable.resize_24dp_fill0_wght400_grad0_opsz24
 
 
                                                 is PixelSortingFilter -> R.drawable.filter_list_24dp_fill0_wght400_grad0_opsz24
