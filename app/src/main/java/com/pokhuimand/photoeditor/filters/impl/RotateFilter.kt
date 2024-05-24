@@ -30,7 +30,6 @@ data class RotateFilterSettings(
     }
 }
 
-//TODO: implement proper threshold
 class RotateFilter : Filter {
     override val id: String = "rotate"
     override val category: FilterCategory = FilterCategory.CropResize

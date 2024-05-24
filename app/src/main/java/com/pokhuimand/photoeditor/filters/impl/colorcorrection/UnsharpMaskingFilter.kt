@@ -34,7 +34,6 @@ data class UnsharpMaskingFilterSettings(
     }
 }
 
-//TODO: implement proper threshold
 class UnsharpMaskingFilter : Filter {
     override val id: String = "unsharp-masking"
     override val category: FilterCategory = FilterCategory.ColorCorrection

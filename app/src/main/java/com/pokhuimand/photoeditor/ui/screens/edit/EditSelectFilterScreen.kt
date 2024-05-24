@@ -37,7 +37,6 @@ import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.SelectableIconButton
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
-import com.pokhuimand.photoeditor.filters.Filters
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.DitheringFilter
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.GrayscaleFilter
@@ -153,7 +152,8 @@ fun EditSelectFilterScreen(
                                     id = when (it) {
                                         FilterCategory.CropResize -> R.drawable.baseline_crop_rotate_24
                                         FilterCategory.ColorCorrection -> R.drawable.baseline_invert_colors_24
-                                        FilterCategory.FaceDetect -> R.drawable.familiar_face_and_zone_24dp_fill0_wght400_grad0_opsz24
+                                        //FilterCategory.FaceDetect -> R.drawable.familiar_face_and_zone_24dp_fill0_wght400_grad0_opsz24
+                                        FilterCategory.FaceRecognition -> R.drawable.familiar_face_and_zone_24dp_fill0_wght400_grad0_opsz24
                                         FilterCategory.Retouch -> R.drawable.point_scan_24dp_fill0_wght400_grad0_opsz24
                                         FilterCategory.TriPointTransform -> R.drawable.workspaces_24dp_fill0_wght400_grad0_opsz24
                                     }

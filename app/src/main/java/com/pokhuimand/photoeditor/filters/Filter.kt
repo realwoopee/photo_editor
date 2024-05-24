@@ -28,7 +28,7 @@ interface Filter {
 enum class FilterCategory {
     CropResize,
     ColorCorrection,
-    FaceDetect,
+    FaceRecognition,
     Retouch,
     TriPointTransform
 }
