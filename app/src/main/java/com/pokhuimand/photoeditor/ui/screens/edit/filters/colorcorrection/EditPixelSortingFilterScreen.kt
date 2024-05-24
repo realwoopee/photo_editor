@@ -44,6 +44,7 @@ import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.RangeSliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.PixelSortingFilterSettings
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.SortDirection
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,116 +60,66 @@ fun EditPixelSortingFilterScreen(
     var filterSettings by remember {
         mutableStateOf(PixelSortingFilterSettings.default)
     }
-    BackHandler(onBack = onCancelPress)
-    Scaffold(topBar = {
-        TopAppBar(title = { },
-            navigationIcon = {
-                IconButton(
-                    onClick = onBackPress
-                ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, null) }
-            }
-        )
-    }) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize()
+    EditFilterScreenBase(
+        photoPreview = photoPreview,
+        isProcessingRunning = isProcessingRunning,
+        onBackPress = onBackPress,
+        onDonePress = onDonePress,
+        onCancelPress = onCancelPress,
+        title = { /*TODO*/ },
+        controlsContent = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Image(
-                    bitmap = photoPreview,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center),
-                    colorFilter = if (isProcessingRunning) ColorFilter.tint(
-                        Color.LightGray.copy(alpha = 0.3f),
-                        BlendMode.SrcOver
-                    ) else null
-                )
-                if (isProcessingRunning)
-                    ProgressSpinner(modifier = Modifier.align(Alignment.Center))
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Sort:")
-                    MultiChoiceSegmentedButtonRow() {
-                        SortDirection.entries.mapIndexed() { index, direction ->
-                            SegmentedButton(
-                                checked = filterSettings.direction == direction,
-                                onCheckedChange = { checked ->
-                                    if (checked) {
-                                        filterSettings = filterSettings.copy(direction = direction)
-                                        onFilterSettingsUpdate(filterSettings)
+                Text("Sort:")
+                MultiChoiceSegmentedButtonRow() {
+                    SortDirection.entries.mapIndexed() { index, direction ->
+                        SegmentedButton(
+                            checked = filterSettings.direction == direction,
+                            onCheckedChange = { checked ->
+                                if (checked) {
+                                    filterSettings = filterSettings.copy(direction = direction)
+                                    onFilterSettingsUpdate(filterSettings)
+                                }
+                            },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = SortDirection.entries.size
+                            ),
+                            icon = {}
+                        ) {
+                            Icon(
+                                ImageVector.vectorResource(
+                                    id =
+                                    when (direction) {
+                                        SortDirection.Up -> R.drawable.arrow_upward_24dp_fill0_wght400_grad0_opsz24
+                                        SortDirection.Right -> R.drawable.arrow_forward_24dp_fill0_wght400_grad0_opsz24
+                                        SortDirection.Down -> R.drawable.arrow_downward_24dp_fill0_wght400_grad0_opsz24
+                                        SortDirection.Left -> R.drawable.arrow_back_24dp_fill0_wght400_grad0_opsz24
                                     }
-                                },
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    index = index,
-                                    count = SortDirection.entries.size
-                                ),
-                                icon = {}
-                            ) {
-                                Icon(
-                                    ImageVector.vectorResource(
-                                        id =
-                                        when (direction) {
-                                            SortDirection.Up -> R.drawable.arrow_upward_24dp_fill0_wght400_grad0_opsz24
-                                            SortDirection.Right -> R.drawable.arrow_forward_24dp_fill0_wght400_grad0_opsz24
-                                            SortDirection.Down -> R.drawable.arrow_downward_24dp_fill0_wght400_grad0_opsz24
-                                            SortDirection.Left -> R.drawable.arrow_back_24dp_fill0_wght400_grad0_opsz24
-                                        }
-                                    ), null
+                                ), null
 
-                                )
-                            }
+                            )
                         }
                     }
                 }
-                RangeSliderWithLabelAndValue(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    value = (filterSettings.threshold),
-                    onValueChange = {
-                        filterSettings =
-                            filterSettings.copy(threshold = it)
-                    },
-                    onValueChangeFinished = {
-                        onFilterSettingsUpdate(filterSettings)
-                    },
-                    valueRange = PixelSortingFilterSettings.Ranges.threshold,
-                    label = "Masking Threshold",
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.secondary)
-                ) {
-                    IconButton(onClick = onCancelPress) {
-                        Icon(
-                            ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
-                            null
-                        )
-                    }
-
-                    IconButton(onClick = onDonePress, enabled = !isProcessingRunning) {
-                        Icon(Icons.Default.Done, null)
-                    }
-                }
             }
-        }
-    }
+            RangeSliderWithLabelAndValue(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                value = (filterSettings.threshold),
+                onValueChange = {
+                    filterSettings =
+                        filterSettings.copy(threshold = it)
+                },
+                onValueChangeFinished = {
+                    onFilterSettingsUpdate(filterSettings)
+                },
+                valueRange = PixelSortingFilterSettings.Ranges.threshold,
+                label = "Masking Threshold",
+            )
+        })
+
 
 }
 

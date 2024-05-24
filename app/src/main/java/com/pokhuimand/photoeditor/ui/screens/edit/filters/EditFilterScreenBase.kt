@@ -4,22 +4,22 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,22 +30,25 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditGrayscaleFilterScreen(
+fun EditFilterScreenBase(
     photoPreview: ImageBitmap,
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
-    onCancelPress: () -> Unit
+    onCancelPress: () -> Unit,
+    title: @Composable () -> Unit,
+    controlsContent: @Composable ColumnScope.() -> Unit
 ) {
     BackHandler(onBack = onCancelPress)
     Scaffold(topBar = {
-        TopAppBar(title = { },
+        TopAppBar(title = title,
             navigationIcon = {
                 IconButton(
                     onClick = onBackPress
@@ -53,23 +56,28 @@ fun EditGrayscaleFilterScreen(
             }
         )
     }) { innerPadding ->
-        Box(
+        ConstraintLayout(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize()
-            ) {
+
+            val (image, controls) = createRefs()
+            BoxWithConstraints(modifier = Modifier
+                .constrainAs(image) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(controls.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    height = Dimension.fillToConstraints
+                }) {
                 Image(
                     bitmap = photoPreview,
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center),
+                        .fillMaxSize()
+                        .align(Alignment.TopCenter),
                     colorFilter = if (isProcessingRunning) ColorFilter.tint(
                         Color.LightGray.copy(alpha = 0.3f),
                         BlendMode.SrcOver
@@ -79,15 +87,19 @@ fun EditGrayscaleFilterScreen(
                     ProgressSpinner(modifier = Modifier.align(Alignment.Center))
             }
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+                modifier = Modifier.constrainAs(controls) {
+                    bottom.linkTo(anchor = parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
             ) {
+                controlsContent()
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.secondary)
+                        .align(Alignment.CenterHorizontally)
                 ) {
                     IconButton(onClick = onCancelPress) {
                         Icon(
@@ -105,4 +117,3 @@ fun EditGrayscaleFilterScreen(
     }
 
 }
-

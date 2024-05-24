@@ -2,7 +2,9 @@ package com.pokhuimand.photoeditor.ui.screens.edit
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,7 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,14 +30,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.pokhuimand.photoeditor.R
+import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SelectableIconButton
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
@@ -63,22 +72,36 @@ fun EditSelectFilterScreen(
             }
         )
     }) { innerPadding ->
-        Box(
+        ConstraintLayout(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize(),
+                .fillMaxSize()
         ) {
-            Image(
-                bitmap = photoPreview,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter),
-                contentScale = ContentScale.FillWidth,
-            )
+
+            val (image, controls) = createRefs()
+            BoxWithConstraints(modifier = Modifier
+                .constrainAs(image) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(controls.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    height = Dimension.fillToConstraints
+                }) {
+                Image(
+                    bitmap = photoPreview,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.TopCenter),
+                    contentScale = ContentScale.Fit,
+                )
+            }
             Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                modifier = Modifier.constrainAs(controls) {
+                    bottom.linkTo(anchor = parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
             ) {
                 if (selectedFilterCategory != null && filters.any { filter -> filter.category == selectedFilterCategory })
                     Row(
@@ -152,7 +175,6 @@ fun EditSelectFilterScreen(
                                     id = when (it) {
                                         FilterCategory.CropResize -> R.drawable.baseline_crop_rotate_24
                                         FilterCategory.ColorCorrection -> R.drawable.baseline_invert_colors_24
-                                        //FilterCategory.FaceDetect -> R.drawable.familiar_face_and_zone_24dp_fill0_wght400_grad0_opsz24
                                         FilterCategory.FaceRecognition -> R.drawable.familiar_face_and_zone_24dp_fill0_wght400_grad0_opsz24
                                         FilterCategory.Retouch -> R.drawable.point_scan_24dp_fill0_wght400_grad0_opsz24
                                         FilterCategory.TriPointTransform -> R.drawable.workspaces_24dp_fill0_wght400_grad0_opsz24
@@ -169,8 +191,6 @@ fun EditSelectFilterScreen(
             }
         }
     }
-
-
 }
 
 

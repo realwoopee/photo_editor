@@ -60,102 +60,51 @@ fun EditResizeFilterScreen(
         mutableStateOf(ResizeFilterSettings.default)
     }
     var timer = Timer()
-    BackHandler(onBack = onCancelPress)
-    Scaffold(topBar = {
-        TopAppBar(title = { },
-            navigationIcon = {
-                IconButton(
-                    onClick = onBackPress
-                ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, null) }
-            }
-        )
-    }) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            Box(
+
+    EditFilterScreenBase(
+        photoPreview = photoPreview,
+        isProcessingRunning = isProcessingRunning,
+        onBackPress = onBackPress,
+        onDonePress = onDonePress,
+        onCancelPress = onCancelPress,
+        title = { /*TODO*/ },
+        controlsContent = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize()
-                    .background(Color.Red)
+                    .wrapContentWidth()
+                    .align(Alignment.CenterHorizontally)
             ) {
-                Image(
-                    bitmap = photoPreview,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center),
-                    colorFilter = if (isProcessingRunning) ColorFilter.tint(
-                        Color.LightGray.copy(alpha = 0.3f),
-                        BlendMode.SrcOver
-                    ) else null
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                var text by remember { mutableStateOf("1.0") }
+                TextField(
+                    value = text,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    onValueChange = {
+                        text = it.replace(",", ".", false)
+                        timer.cancel()
+                        timer = Timer()
+                        try {
+                            filterSettings = filterSettings.copy(coefficient = text.toFloat())
+                            if (filterSettings.coefficient > 0)
+                                timer.schedule(1000) {
+                                    onFilterSettingsUpdate(filterSettings)
+                                }
+                        } catch (_: NumberFormatException) {
+                        }
+                    },
+                    label = { Text("Enter coefficient:") }
                 )
-                if (isProcessingRunning)
-                    ProgressSpinner(modifier = Modifier.align(Alignment.Center))
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    var text by remember { mutableStateOf("1.0") }
-                    TextField(
-                        value = text,
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        onValueChange = {
-                            text = it.replace(",", ".", false)
-                            timer.cancel()
-                            timer = Timer()
-                            try {
-                                filterSettings = filterSettings.copy(coefficient = text.toFloat())
-                                if (filterSettings.coefficient > 0)
-                                    timer.schedule(1000) {
-                                        onFilterSettingsUpdate(filterSettings)
-                                    }
-                            } catch (_: NumberFormatException) {
-                            }
-                        },
-                        label = { Text("Enter coefficient:") }
-                    )
 
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.secondary)
-                ) {
-                    IconButton(onClick = onCancelPress) {
-                        androidx.compose.material3.Icon(
-                            painter = painterResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
-                            null,
-                        )
-                    }
-
-                    IconButton(onClick = onDonePress, enabled = !isProcessingRunning) {
-                        Icon(Icons.Default.Done, null)
-                    }
-                }
             }
-        }
-    }
+        })
 
 }
 

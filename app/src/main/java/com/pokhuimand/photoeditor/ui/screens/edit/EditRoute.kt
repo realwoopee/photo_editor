@@ -15,7 +15,7 @@ import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFil
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFaceRecognitionScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditContrastAndBrightnessFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditDitheringFilterScreen
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditGrayscaleFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditGrayscaleFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditNothingFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditPixelSortingFilterScreen
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
