@@ -1,4 +1,4 @@
-package com.pokhuimand.photoeditor.ui.screens.edit.filters
+package com.pokhuimand.photoeditor.ui.screens.edit.filters.cropresize
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
 
 
 @Composable

@@ -19,8 +19,8 @@ import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditGr
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditNothingFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditPixelSortingFilterScreen
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilter
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditResizeFilterScreen
-import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditRotateFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.cropresize.EditResizeFilterScreen
+import com.pokhuimand.photoeditor.ui.screens.edit.filters.cropresize.EditRotateFilterScreen
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection.EditUnsharpMaskingFilterScreen
 
 @Composable
@@ -118,7 +118,8 @@ fun EditRoute(viewModel: EditViewModel) {
                 onBackPress = viewModel::onBackPress,
                 onCancelPress = { viewModel.onFilterSelect(null) },
                 onDonePress = viewModel::onFilterApply,
-                onFilterSettingsUpdate = viewModel::onFilterSettingsUpdate
+                onFilterSettingsUpdate = viewModel::onFilterSettingsUpdate,
+                originalResolution = uiState.originalSize
             )
         }
 

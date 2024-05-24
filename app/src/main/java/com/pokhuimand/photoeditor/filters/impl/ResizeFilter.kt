@@ -25,6 +25,10 @@ data class ResizeFilterSettings(
     val coefficient: Float
 ) :
     FilterSettings() {
+    object Ranges {
+        val coefficient = 0.01f..3f
+    }
+    
     companion object {
         val default = ResizeFilterSettings(1.0f)
     }

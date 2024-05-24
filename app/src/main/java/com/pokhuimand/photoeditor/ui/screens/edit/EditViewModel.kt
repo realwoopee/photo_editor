@@ -144,7 +144,8 @@ private data class EditViewModelState(
         EditUiState.HasPhoto(
             photo = preview,
             filter = filter,
-            isProcessingRunning = isProcessingRunning
+            isProcessingRunning = isProcessingRunning,
+            originalSize = Pair(preview.width, preview.height)
         )
 
 }
@@ -161,7 +162,8 @@ sealed class EditUiState {
     data class HasPhoto(
         val photo: Bitmap,
         val isProcessingRunning: Boolean = false,
-        val filter: Filter? = null
+        val filter: Filter? = null,
+        val originalSize: Pair<Int, Int>
     ) :
         EditUiState()
 }
