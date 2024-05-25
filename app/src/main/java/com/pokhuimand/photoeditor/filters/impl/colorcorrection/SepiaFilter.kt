@@ -7,8 +7,8 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import com.pokhuimand.photoeditor.filters.Filter
-import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
 import kotlinx.coroutines.Dispatchers

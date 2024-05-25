@@ -2,26 +2,16 @@ package com.pokhuimand.photoeditor.filters.impl.colorcorrection
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import com.pokhuimand.photoeditor.filters.Filter
-import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.coroutines.cancellation.CancellationException
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.round
-import kotlin.math.roundToInt
 
 
 data class TempAndTintFilterSettings(

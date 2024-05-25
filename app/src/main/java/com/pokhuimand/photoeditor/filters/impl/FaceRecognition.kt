@@ -9,7 +9,6 @@ import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.opencv.android.Utils
 import org.opencv.core.Mat
@@ -17,7 +16,6 @@ import org.opencv.core.MatOfRect
 import org.opencv.core.Rect
 import org.opencv.core.Size
 import org.opencv.objdetect.CascadeClassifier
-import kotlin.coroutines.cancellation.CancellationException
 
 
 data class FaceRecognitionSettings(

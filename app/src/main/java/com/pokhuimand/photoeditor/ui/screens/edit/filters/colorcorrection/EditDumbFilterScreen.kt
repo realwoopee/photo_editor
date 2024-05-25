@@ -1,14 +1,11 @@
 package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
-import android.graphics.Color
-import androidx.compose.material3.Text
-import androidx.compose.ui.res.stringResource
-import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
 
 

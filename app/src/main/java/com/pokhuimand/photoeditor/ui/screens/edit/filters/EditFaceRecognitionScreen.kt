@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.stringResource
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.filters.impl.FaceRecognitionSettings
-import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
 
 
 @Composable

@@ -2,8 +2,8 @@ package com.pokhuimand.photoeditor.filters.impl
 
 import android.graphics.Bitmap
 import com.pokhuimand.photoeditor.filters.Filter
-import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterCategory
+import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 
 data class NothingFilterSettings(val settings: String = "") : FilterSettings()

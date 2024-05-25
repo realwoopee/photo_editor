@@ -4,10 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pokhuimand.photoeditor.data.photos.PhotosRepository
-import com.pokhuimand.photoeditor.data.photos.impl.FileSystemPhotoRepository
 import com.pokhuimand.photoeditor.models.Photo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -80,7 +77,7 @@ class GalleryViewModel(
     }
 
     fun onExport() {
-        
+
     }
 
     companion object {

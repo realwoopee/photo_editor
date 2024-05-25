@@ -3,7 +3,6 @@ package com.pokhuimand.photoeditor.filters.impl
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.compose.ui.geometry.Offset
-import androidx.core.graphics.red
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterDataCache

@@ -2,7 +2,6 @@ package com.pokhuimand.photoeditor.filters.impl
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.util.Log
 import com.pokhuimand.photoeditor.filters.Filter
 import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterDataCache
@@ -10,13 +9,9 @@ import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import java.util.Date
-import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor

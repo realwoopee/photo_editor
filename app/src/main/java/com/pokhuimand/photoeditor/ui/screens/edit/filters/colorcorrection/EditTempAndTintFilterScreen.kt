@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.stringResource
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
-import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilterSettings
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.TempAndTintFilterSettings
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
 import kotlin.math.roundToInt
