@@ -41,21 +41,20 @@ class AffineTransformation : Filter {
         return image
     }
 
-    fun drawCircles(src: Bitmap, offsetList: List<Offset>): Bitmap {
+    private fun drawCircles(src: Bitmap, offsetList: List<Offset>): Bitmap {
         val srcArray = bitmapTo2DArray(src)
-        var colorList: List<Color>
 
-        colorList = listOf(
+        val colorList: List<Color> = listOf(
             Color.valueOf(1.0f, 0.0f, 0.0f),
             Color.valueOf(0.0f, 1.0f, 0.0f),
             Color.valueOf(0.0f, 0.0f, 1.0f)
         )
-        for (i in 0..<offsetList.size) {
-            var offset = offsetList[i]
-            var color = colorList[i % 3]
+        for (i in offsetList.indices) {
+            val offset = offsetList[i]
+            val color = colorList[i % 3]
             val centerX = (offset.x * (src.width - 1)).toInt()
             val centerY = (offset.y * (src.height - 1)).toInt()
-            val radius = 20
+            val radius = ceil(src.width / 20.0).toInt()
 
             for (y in (centerY - radius) until (centerY + radius)) {
                 for (x in (centerX - radius) until (centerX + radius)) {
@@ -71,19 +70,19 @@ class AffineTransformation : Filter {
         return arrayToBitmap(srcArray)
     }
 
-    fun applyAffineTransformation(
+    private fun applyAffineTransformation(
         srcImage: Bitmap,
         srcPoints: List<Offset>,
         dstPoints: List<Offset>
     ): Bitmap {
         if (srcPoints.size + dstPoints.size < 6) {
-            var offsetList: List<Offset> = listOf()
+            val offsetList: MutableList<Offset> = mutableListOf()
 
-            for (i in 0..<srcPoints.size) {
-                offsetList += srcPoints[i]
+            for (element in srcPoints) {
+                offsetList += element
             }
-            for (i in 0..<dstPoints.size) {
-                offsetList += dstPoints[i]
+            for (element in dstPoints) {
+                offsetList += element
             }
             return drawCircles(srcImage, offsetList)
         }

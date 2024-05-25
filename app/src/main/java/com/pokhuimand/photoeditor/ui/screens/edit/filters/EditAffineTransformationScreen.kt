@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -22,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -41,6 +43,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.ProgressSpinner
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
@@ -58,6 +62,24 @@ fun EditAffineTransformationScreen(
     onCancelPress: () -> Unit,
     onFilterSettingsUpdate: (AffineTransformationSettings) -> Unit
 ) {
+    val runFilter = remember<(List<Offset>) -> Unit>(onFilterSettingsUpdate) {
+        { filterSettings ->
+            val settings =
+                AffineTransformationSettings(
+                    emptyList(), emptyList()
+                )
+
+            for (i in 0..<minOf(3, filterSettings.size)) {
+                settings.pointSet1 += filterSettings[i]
+            }
+
+            for (i in 3..<filterSettings.size) {
+                settings.pointSet2 += filterSettings[i]
+            }
+            onFilterSettingsUpdate(settings)
+        }
+    }
+
     var filterSettings by remember {
         mutableStateOf(emptyList<Offset>())
     }
@@ -68,26 +90,46 @@ fun EditAffineTransformationScreen(
                 IconButton(
                     onClick = onBackPress
                 ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, null) }
+            },
+            actions = {
+                if (filterSettings.isNotEmpty())
+                    IconButton(
+                        onClick = {
+                            filterSettings = filterSettings.dropLast(1)
+                            runFilter(filterSettings)
+                        }
+                    ) {
+                        Icon(
+                            ImageVector.vectorResource(id = R.drawable.undo_24dp_fill0_wght400_grad0_opsz24),
+                            null
+                        )
+                    }
             }
         )
     }) { innerPadding ->
-        Box(
-            modifier = androidx.compose.ui.Modifier
+        ConstraintLayout(
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize()
-            ) {
+
+            val (image, controls) = createRefs()
+            BoxWithConstraints(modifier = Modifier
+                .constrainAs(image) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(controls.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
+                }) {
                 Image(
                     bitmap = photoPreview,
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .aspectRatio(photoPreview.width.toFloat() / photoPreview.height)
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .align(Alignment.Center)
                         .pointerInput(Unit) {
                             detectTapGestures(
@@ -96,19 +138,7 @@ fun EditAffineTransformationScreen(
                                         offset.x / size.width,
                                         offset.y / size.height
                                     )
-                                    var settings: AffineTransformationSettings =
-                                        AffineTransformationSettings(
-                                            emptyList(), emptyList()
-                                        )
-
-                                    for (i in 0..<minOf(3, filterSettings.size)) {
-                                        settings.pointSet1 += filterSettings[i]
-                                    }
-
-                                    for (i in 3..<filterSettings.size) {
-                                        settings.pointSet2 += filterSettings[i]
-                                    }
-                                    onFilterSettingsUpdate(settings)
+                                    runFilter(filterSettings)
                                 }
                             )
                         },
@@ -120,22 +150,30 @@ fun EditAffineTransformationScreen(
                 if (isProcessingRunning)
                     ProgressSpinner(modifier = Modifier.align(Alignment.Center))
             }
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.secondary)
-            ) {
-                IconButton(onClick = onCancelPress) {
-                    Icon(
-                        ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
-                        null
-                    )
+            Column(
+                modifier = Modifier.constrainAs(controls) {
+                    bottom.linkTo(anchor = parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                 }
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.secondary)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    IconButton(onClick = onCancelPress) {
+                        Icon(
+                            ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                            null
+                        )
+                    }
 
-                IconButton(onClick = onDonePress, enabled = !isProcessingRunning) {
-                    Icon(Icons.Default.Done, null)
+                    IconButton(onClick = onDonePress, enabled = !isProcessingRunning) {
+                        Icon(Icons.Default.Done, null)
+                    }
                 }
             }
         }
