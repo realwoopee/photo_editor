@@ -74,6 +74,16 @@ class EditViewModel(
     }
 
     fun onFilterSelect(filter: Filter?) {
+        if (_state.value.filter != null && filter == null)
+            _state.update {
+                it.copy(
+                    source = BitmapFactory.decodeFile(
+                        photosRepository.getPhoto(photoId).uri.path,
+                        BitmapFactory.Options().apply {
+                            inMutable = false
+                        })
+                )
+            }
         _state.update {
             it.copy(
                 filter = filter,
