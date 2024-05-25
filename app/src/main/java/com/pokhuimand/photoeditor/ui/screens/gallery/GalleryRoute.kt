@@ -8,9 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.io.File
 
 @Composable
 fun GalleryRoute(galleryViewModel: GalleryViewModel) {
@@ -18,11 +16,12 @@ fun GalleryRoute(galleryViewModel: GalleryViewModel) {
 
     GalleryRoute(
         uiState = uiState,
-        onImportPhoto = { galleryViewModel.importPhoto(it) },
-        onSelectedDelete = { galleryViewModel.onSelectedDelete() },
-        onPhotoShortPress = { galleryViewModel.onPhotoShortPress(it) },
-        onPhotoLongPress = { galleryViewModel.onPhotoLongPress(it) },
+        onImportPhoto = galleryViewModel::importPhoto,
+        onSelectedDelete = galleryViewModel::onSelectedDelete,
+        onPhotoShortPress = galleryViewModel::onPhotoShortPress,
+        onPhotoLongPress = galleryViewModel::onPhotoLongPress,
         onCameraImport = galleryViewModel::importCamera,
+        onExportPress = galleryViewModel::onExport,
         cameraBufferPath = galleryViewModel.cameraBufferUri
     )
 }
@@ -34,6 +33,7 @@ private fun GalleryRoute(
     onCameraImport: () -> Unit,
     cameraBufferPath: Uri,
     onSelectedDelete: () -> Unit,
+    onExportPress: () -> Unit,
     onPhotoLongPress: (String) -> Unit,
     onPhotoShortPress: (String) -> Unit
 ) {
@@ -65,13 +65,22 @@ private fun GalleryRoute(
     val deviceHasCamera = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
     when (uiState) {
-        is GalleryUiState.NoPhotos -> GalleryEmptyScreen(onImportPhoto = importPhoto)
+        is GalleryUiState.NoPhotos ->
+            GalleryEmptyScreen(
+                uiState = GalleryUiState.NoPhotos,
+                deviceHasCamera = deviceHasCamera,
+                onImportPhoto = importPhoto,
+                onSelectedDelete = onSelectedDelete,
+                onLaunchCamera = { cameraLauncher.launch(cameraBufferPath) }
+            )
+
         is GalleryUiState.HasPhotos ->
             GalleryPhotosScreen(
                 uiState = uiState,
                 deviceHasCamera = deviceHasCamera,
                 onImportPhoto = importPhoto,
                 onSelectedDelete = onSelectedDelete,
+                onExportPress = onExportPress,
                 onPhotoLongPress = onPhotoLongPress,
                 onPhotoShortPress = onPhotoShortPress,
                 onLaunchCamera = { cameraLauncher.launch(cameraBufferPath) }

@@ -4,7 +4,7 @@
     <string name="UMName">Unsharp Masking</string>
     <string name="UMAmount">Amount</string>
     <string name="UMThreshold">Threshold</string>
-    <string name="PressAnywhere">Press anywhere to add photos</string>
+    <string name="ImportPhotos">Use corner button to add photos</string>
     <string name="PhotoEditor">Photo Editor</string>
     <string name="MainViewFab">main_view_fab</string>
     <string name="Degrees">Degrees</string>

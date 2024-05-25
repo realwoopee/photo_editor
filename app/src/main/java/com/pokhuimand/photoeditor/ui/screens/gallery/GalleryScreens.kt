@@ -33,9 +33,20 @@ import com.leinardi.android.speeddial.compose.SpeedDialOverlay
 import com.leinardi.android.speeddial.compose.SpeedDialState
 import com.pokhuimand.photoeditor.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
-fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
+fun GalleryEmptyScreen(
+    uiState: GalleryUiState.NoPhotos,
+    deviceHasCamera: Boolean,
+    onImportPhoto: () -> Unit,
+    onLaunchCamera: () -> Unit,
+    onSelectedDelete: () -> Unit
+) {
+    var speedDialState by rememberSaveable { mutableStateOf(SpeedDialState.Collapsed) }
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
@@ -46,6 +57,70 @@ fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
                     )
                 },
             )
+        },
+        floatingActionButton = {
+            AnimatedContent(
+                targetState = uiState.toFabState(deviceHasCamera),
+                label = stringResource(R.string.MainViewFab)
+            ) {
+                when (it) {
+                    is GalleryPhotosFabState.PhotosSelected -> FloatingActionButton(
+                        onClick = { onSelectedDelete() },
+                        //modifier = Modifier.animateEnterExit(enter = fadeIn(), exit = fadeOut())
+                    ) {
+                        Icon(
+                            ImageVector.vectorResource(id = R.drawable.delete_24dp_fill0_wght400_grad0_opsz24),
+                            null
+                        )
+                    }
+
+                    is GalleryPhotosFabState.ImportAvailable -> SpeedDial(
+                        state = speedDialState,
+                        onFabClick = { expanded ->
+                            speedDialState =
+                                if (expanded) SpeedDialState.Collapsed else SpeedDialState.Expanded
+                        },
+                        fabOpenedContent = {
+                            Icon(
+                                ImageVector.vectorResource(id = R.drawable.cancel_24dp_fill0_wght400_grad0_opsz24),
+                                null
+                            )
+                        },
+                        //modifier = Modifier.animateEnterExit(enter = fadeIn(), exit = fadeOut())
+
+                    ) {
+                        item {
+                            FloatingActionButton(
+                                onClick = {
+                                    speedDialState = SpeedDialState.Collapsed
+                                    onImportPhoto()
+                                },
+                            ) {
+                                Icon(
+                                    ImageVector.vectorResource(id = R.drawable.add_photo_alternate_24dp_fill0_wght400_grad0_opsz24),
+                                    null
+                                )
+                            }
+                        }
+
+                        if (deviceHasCamera)
+                            item {
+                                FloatingActionButton(
+                                    onClick = {
+                                        speedDialState = SpeedDialState.Collapsed
+                                        onLaunchCamera()
+                                    },
+                                ) {
+                                    Icon(
+                                        ImageVector.vectorResource(id = R.drawable.add_a_photo_24dp_fill0_wght400_grad0_opsz24),
+                                        null
+                                    )
+                                }
+                            }
+                    }
+                }
+
+            }
         }) { innerPadding ->
         Box(
             modifier = Modifier
@@ -54,7 +129,17 @@ fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
                 .clickable { onImportPhoto() },
             contentAlignment = Alignment.Center
         ) {
-            Text(stringResource(R.string.PressAnywhere))
+            Text(stringResource(R.string.ImportPhotos))
+
+            val interactionSource = remember { MutableInteractionSource() }
+            SpeedDialOverlay(
+                visible = speedDialState == SpeedDialState.Expanded,
+                onClick = { },
+                modifier = Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) { speedDialState = speedDialState.toggle() }
+            )
         }
     }
 }
@@ -70,6 +155,7 @@ fun GalleryPhotosScreen(
     onImportPhoto: () -> Unit,
     onLaunchCamera: () -> Unit,
     onSelectedDelete: () -> Unit,
+    onExportPress: () -> Unit,
     onPhotoLongPress: (photoId: String) -> Unit,
     onPhotoShortPress: (photoId: String) -> Unit
 ) {
@@ -178,8 +264,8 @@ private sealed class GalleryPhotosFabState {
     data class ImportAvailable(val deviceHasCamera: Boolean) : GalleryPhotosFabState()
 }
 
-private fun GalleryUiState.HasPhotos.toFabState(deviceHasCamera: Boolean) =
-    if (this.selectedPhotos.isNotEmpty())
+private fun GalleryUiState.toFabState(deviceHasCamera: Boolean) =
+    if (this is GalleryUiState.HasPhotos && this.selectedPhotos.isNotEmpty())
         GalleryPhotosFabState.PhotosSelected
     else
         GalleryPhotosFabState.ImportAvailable(deviceHasCamera)

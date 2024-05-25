@@ -79,6 +79,10 @@ class GalleryViewModel(
         photosRepository.removePhotos(_state.value.selectedPhotos.mapTo(HashSet()) { it.id })
     }
 
+    fun onExport() {
+        
+    }
+
     companion object {
         fun provideFactory(
             photosRepository: PhotosRepository,

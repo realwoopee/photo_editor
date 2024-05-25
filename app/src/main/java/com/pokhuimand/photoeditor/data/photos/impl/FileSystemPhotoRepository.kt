@@ -33,17 +33,17 @@ const val photoBufferName = "photo.png"
 const val photoBufferPath = "$tempDir/$photoBufferName"
 
 class FileSystemPhotoRepository(
-
     context: Context,
     providerAuthority: String,
-
-    ) : PhotosRepository {
+) : PhotosRepository {
     private val photos = MutableStateFlow<List<Photo>>(emptyList())
     private val contentResolver = context.contentResolver
     private val filesDir = context.filesDir
     override val photoBufferUri: Uri
 
     init {
+        File(filesDir, tempDir).mkdirs()
+        File(filesDir, photoBufferPath).createNewFile()
         photoBufferUri = FileProvider.getUriForFile(
             context,
             providerAuthority,
@@ -51,7 +51,7 @@ class FileSystemPhotoRepository(
         )
 
         photos.update {
-            filesDir.listFiles()?.map { f ->
+            filesDir.listFiles()?.filter { f -> f.isFile && f.extension == "png" }?.map { f ->
                 Photo(
                     f.nameWithoutExtension,
                     f.toUri(),
