@@ -8,32 +8,51 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import java.io.File
 
 @Composable
 fun GalleryRoute(galleryViewModel: GalleryViewModel) {
     val uiState by galleryViewModel.uiState.collectAsStateWithLifecycle()
 
-    GalleryRoute(uiState = uiState,
+    GalleryRoute(
+        uiState = uiState,
         onImportPhoto = { galleryViewModel.importPhoto(it) },
         onSelectedDelete = { galleryViewModel.onSelectedDelete() },
         onPhotoShortPress = { galleryViewModel.onPhotoShortPress(it) },
-        onPhotoLongPress = { galleryViewModel.onPhotoLongPress(it) })
+        onPhotoLongPress = { galleryViewModel.onPhotoLongPress(it) },
+        onCameraImport = galleryViewModel::importCamera,
+        cameraBufferPath = galleryViewModel.cameraBufferUri
+    )
 }
 
 @Composable
 private fun GalleryRoute(
     uiState: GalleryUiState,
     onImportPhoto: (Uri) -> Unit,
+    onCameraImport: () -> Unit,
+    cameraBufferPath: Uri,
     onSelectedDelete: () -> Unit,
     onPhotoLongPress: (String) -> Unit,
     onPhotoShortPress: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
     val pickMedia =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null)
                 onImportPhoto(uri)
         }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                onCameraImport()
+            }
+        }
+    )
 
     val importPhoto = {
         pickMedia.launch(
@@ -41,9 +60,7 @@ private fun GalleryRoute(
                 ActivityResultContracts.PickVisualMedia.ImageOnly
             )
         )
-    };
-
-    val context = LocalContext.current
+    }
 
     val deviceHasCamera = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
@@ -56,7 +73,8 @@ private fun GalleryRoute(
                 onImportPhoto = importPhoto,
                 onSelectedDelete = onSelectedDelete,
                 onPhotoLongPress = onPhotoLongPress,
-                onPhotoShortPress = onPhotoShortPress
+                onPhotoShortPress = onPhotoShortPress,
+                onLaunchCamera = { cameraLauncher.launch(cameraBufferPath) }
             )
 
     }

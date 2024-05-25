@@ -36,6 +36,12 @@ class GalleryViewModel(
         }
     }
 
+    fun importCamera() {
+        photosRepository.importPhotoBuffer()
+    }
+
+    val cameraBufferUri = photosRepository.photoBufferUri
+
     fun importPhoto(uri: Uri): Unit {
         photosRepository.importContent(uri)
     }

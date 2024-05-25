@@ -1,40 +1,55 @@
 package com.pokhuimand.photoeditor.data.photos.impl
 
-import android.content.ContentResolver
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
-import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.pokhuimand.photoeditor.data.photos.PhotosRepository
 import com.pokhuimand.photoeditor.models.Photo
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.attribute.FileTime
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.UUID
 
 private fun getFileCreationDate(file: File): LocalDateTime {
-    return (java.nio.file.Files.readAttributes(
+    return (Files.readAttributes(
         file.toPath(),
         "creationTime"
     )["creationTime"] as FileTime).toInstant().atZone(ZoneId.systemDefault())
         .toLocalDateTime()
 }
 
+
+const val tempDir = "temp"
+const val photoBufferName = "photo.png"
+const val photoBufferPath = "$tempDir/$photoBufferName"
+
 class FileSystemPhotoRepository(
-    private val contentResolver: ContentResolver,
-    private val filesDir: File
-) : PhotosRepository {
+
+    context: Context,
+    providerAuthority: String,
+
+    ) : PhotosRepository {
     private val photos = MutableStateFlow<List<Photo>>(emptyList())
+    private val contentResolver = context.contentResolver
+    private val filesDir = context.filesDir
+    override val photoBufferUri: Uri
 
     init {
+        photoBufferUri = FileProvider.getUriForFile(
+            context,
+            providerAuthority,
+            File(filesDir, photoBufferPath)
+        )
+
         photos.update {
             filesDir.listFiles()?.map { f ->
                 Photo(
@@ -111,5 +126,9 @@ class FileSystemPhotoRepository(
     override fun observePhotos(): Flow<List<Photo>> = photos
     override fun getPhotos(): List<Photo> {
         return photos.value;
+    }
+
+    override fun importPhotoBuffer() {
+        importContent(photoBufferUri)
     }
 }

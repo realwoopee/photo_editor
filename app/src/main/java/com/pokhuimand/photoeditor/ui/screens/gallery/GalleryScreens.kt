@@ -68,6 +68,7 @@ fun GalleryPhotosScreen(
     uiState: GalleryUiState.HasPhotos,
     deviceHasCamera: Boolean,
     onImportPhoto: () -> Unit,
+    onLaunchCamera: () -> Unit,
     onSelectedDelete: () -> Unit,
     onPhotoLongPress: (photoId: String) -> Unit,
     onPhotoShortPress: (photoId: String) -> Unit
@@ -135,6 +136,7 @@ fun GalleryPhotosScreen(
                                 FloatingActionButton(
                                     onClick = {
                                         speedDialState = SpeedDialState.Collapsed
+                                        onLaunchCamera()
                                     },
                                 ) {
                                     Icon(

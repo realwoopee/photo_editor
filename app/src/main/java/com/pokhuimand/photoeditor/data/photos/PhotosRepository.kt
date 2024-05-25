@@ -17,4 +17,8 @@ interface PhotosRepository {
 
     fun observePhotos(): Flow<List<Photo>>
     fun savePhoto(photoId: String, image: Bitmap)
+
+    val photoBufferUri: Uri
+
+    fun importPhotoBuffer()
 }
