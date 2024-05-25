@@ -103,6 +103,7 @@ fun EditSelectFilterScreen(
                     bottom.linkTo(anchor = parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
                 }
             ) {
                 if (selectedFilterCategory != null && filters.any { filter -> filter.category == selectedFilterCategory })
@@ -111,8 +112,9 @@ fun EditSelectFilterScreen(
                             .padding(bottom = 12.dp)
                             .height(48.dp)
                             .wrapContentWidth()
+                            .align(Alignment.CenterHorizontally)
                             .background(
-                                Color.DarkGray,
+                                MaterialTheme.colorScheme.secondaryContainer,
                                 shape = RoundedCornerShape(12.dp)
                             )
                     ) {
@@ -137,10 +139,7 @@ fun EditSelectFilterScreen(
                                                 is ContrastAndBrightnessFilter -> R.drawable.baseline_invert_colors_24
                                                 is ResizeFilter -> R.drawable.resize_24dp_fill0_wght400_grad0_opsz24
                                                 is TempAndTintFilter -> R.drawable.thermostat_24dp_fill0_wght400_grad0_opsz24
-
                                                 is PixelSortingFilter -> R.drawable.filter_list_24dp_fill0_wght400_grad0_opsz24
-
-
                                                 else -> R.drawable.sentiment_very_dissatisfied_24dp_fill0_wght400_grad0_opsz24
 
                                             }
@@ -159,8 +158,9 @@ fun EditSelectFilterScreen(
                         .padding(bottom = 12.dp)
                         .height(48.dp)
                         .wrapContentWidth()
+                        .align(Alignment.CenterHorizontally)
                         .background(
-                            Color.DarkGray,
+                            MaterialTheme.colorScheme.primaryContainer,
                             shape = RoundedCornerShape(12.dp)
                         )
                 ) {
@@ -168,10 +168,18 @@ fun EditSelectFilterScreen(
                         SelectableIconButton(
                             selected = selectedFilterCategory == it,
                             onClick = {
-                                selectedFilterCategory =
-                                    selectedFilterCategory.toggle(it)
+                                if (it != FilterCategory.FaceRecognition && it != FilterCategory.TriPointTransform)
+                                    selectedFilterCategory = selectedFilterCategory.toggle(it)
+                                else if (it == FilterCategory.TriPointTransform)
+                                    onFilterSelect(filters.first { f -> f.category == FilterCategory.TriPointTransform })
+                                else
+                                    onFilterSelect(filters.first { f -> f.category == FilterCategory.FaceRecognition })
                             },
-                            modifier = Modifier.fillMaxHeight()
+                            modifier = Modifier.fillMaxHeight(),
+                            selectedModifier = Modifier.background(
+                                MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(50)
+                            )
                         ) {
                             Icon(
                                 painterResource(
@@ -179,7 +187,6 @@ fun EditSelectFilterScreen(
                                         FilterCategory.CropResize -> R.drawable.baseline_crop_rotate_24
                                         FilterCategory.ColorCorrection -> R.drawable.baseline_invert_colors_24
                                         FilterCategory.FaceRecognition -> R.drawable.familiar_face_and_zone_24dp_fill0_wght400_grad0_opsz24
-                                        FilterCategory.Retouch -> R.drawable.point_scan_24dp_fill0_wght400_grad0_opsz24
                                         FilterCategory.TriPointTransform -> R.drawable.workspaces_24dp_fill0_wght400_grad0_opsz24
                                     }
                                 ),

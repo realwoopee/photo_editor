@@ -29,6 +29,5 @@ enum class FilterCategory {
     CropResize,
     ColorCorrection,
     FaceRecognition,
-    Retouch,
     TriPointTransform
 }

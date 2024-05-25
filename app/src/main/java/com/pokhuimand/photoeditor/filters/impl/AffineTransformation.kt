@@ -9,6 +9,10 @@ import com.pokhuimand.photoeditor.filters.FilterCategory
 import com.pokhuimand.photoeditor.filters.FilterDataCache
 import com.pokhuimand.photoeditor.filters.FilterSettings
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -70,11 +74,11 @@ class AffineTransformation : Filter {
         return arrayToBitmap(srcArray)
     }
 
-    private fun applyAffineTransformation(
+    private suspend fun applyAffineTransformation(
         srcImage: Bitmap,
         srcPoints: List<Offset>,
         dstPoints: List<Offset>
-    ): Bitmap {
+    ): Bitmap = coroutineScope {
         if (srcPoints.size + dstPoints.size < 6) {
             val offsetList: MutableList<Offset> = mutableListOf()
 
@@ -84,7 +88,8 @@ class AffineTransformation : Filter {
             for (element in dstPoints) {
                 offsetList += element
             }
-            return drawCircles(srcImage, offsetList)
+            ensureActive()
+            return@coroutineScope drawCircles(srcImage, offsetList)
         }
 
         val srcArray = bitmapTo2DArray(srcImage)
@@ -135,11 +140,12 @@ class AffineTransformation : Filter {
 
         val resultWidth = ceil(maxX - minX).toInt()
         val resultHeight = ceil(maxY - minY).toInt()
-
+        ensureActive()
         val resultImage = Array(resultHeight) { IntArray(resultWidth) { Color.TRANSPARENT } }
 
         for (y in 0 until resultHeight) {
             for (x in 0 until resultWidth) {
+                ensureActive()
                 val srcX = invA * (x + minX) + invB * (y + minY) + invC
                 val srcY = invD * (x + minX) + invE * (y + minY) + invF
 
@@ -149,8 +155,33 @@ class AffineTransformation : Filter {
                 }
             }
         }
+        val processorCount = Runtime.getRuntime().availableProcessors()
+        val jobs = List(processorCount) { n ->
+            async {
+                val start = n * (resultHeight * resultWidth / processorCount)
+                val stop =
+                    ((n + 1) * (resultHeight * resultWidth / processorCount)).coerceAtMost(
+                        resultHeight * resultWidth
+                    )
+                for (i in start until stop) {
+                    ensureActive()
+                    val y = i / resultWidth
+                    val x = i - resultWidth * y
+                    val srcX = invA * (x + minX) + invB * (y + minY) + invC
+                    val srcY = invD * (x + minX) + invE * (y + minY) + invF
 
-        return arrayToBitmap(resultImage)
+                    if (srcX in 0.0..<width.toDouble() && srcY in 0.0..<height.toDouble()) {
+                        val rgb = bilinearInterpolation(srcArray, srcX, srcY)
+                        resultImage[y][x] = rgb
+                    }
+                }
+            }
+        }
+        ensureActive()
+        jobs.awaitAll()
+
+        ensureActive()
+        return@coroutineScope arrayToBitmap(resultImage)
     }
 
 

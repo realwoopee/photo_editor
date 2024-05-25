@@ -18,6 +18,7 @@ fun SelectableIconButton(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedModifier: Modifier = Modifier,
     icon: @Composable BoxScope.() -> Unit
 ) {
     IconButton(onClick = onClick, modifier = modifier) {
@@ -28,11 +29,7 @@ fun SelectableIconButton(
                     .fillMaxSize()
                     .then(
                         when (state) {
-                            true -> Modifier.background(
-                                MaterialTheme.colorScheme.secondary,
-                                shape = RoundedCornerShape(15)
-                            )
-
+                            true -> selectedModifier
                             false -> Modifier
                         }
                     )
