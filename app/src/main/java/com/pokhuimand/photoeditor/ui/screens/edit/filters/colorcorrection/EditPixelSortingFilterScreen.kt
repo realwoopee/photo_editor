@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.pokhuimand.photoeditor.R
@@ -66,13 +67,13 @@ fun EditPixelSortingFilterScreen(
         onBackPress = onBackPress,
         onDonePress = onDonePress,
         onCancelPress = onCancelPress,
-        title = { /*TODO*/ },
+        title = { Text(stringResource(R.string.PSFilterName)) },
         controlsContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Sort:")
+                Text(stringResource(R.string.Sort))
                 MultiChoiceSegmentedButtonRow() {
                     SortDirection.entries.mapIndexed() { index, direction ->
                         SegmentedButton(
@@ -116,7 +117,7 @@ fun EditPixelSortingFilterScreen(
                     onFilterSettingsUpdate(filterSettings)
                 },
                 valueRange = PixelSortingFilterSettings.Ranges.threshold,
-                label = "Masking Threshold",
+                label = stringResource(R.string.MakingThreshold),
             )
         })
 

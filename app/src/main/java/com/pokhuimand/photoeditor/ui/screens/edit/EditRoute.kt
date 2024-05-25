@@ -1,9 +1,12 @@
 package com.pokhuimand.photoeditor.ui.screens.edit
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.filters.impl.AffineTransformation
 import com.pokhuimand.photoeditor.filters.impl.FaceRecognition
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.ContrastAndBrightnessFilter
@@ -48,7 +51,18 @@ fun EditRoute(viewModel: EditViewModel) {
                 isProcessingRunning = uiState.isProcessingRunning,
                 onBackPress = viewModel::onBackPress,
                 onCancelPress = { viewModel.onFilterSelect(null) },
-                onDonePress = viewModel::onFilterApply
+                onDonePress = viewModel::onFilterApply,
+                title = {
+                    Text(
+                        stringResource(
+                            id = when (uiState.filter) {
+                                is GrayscaleFilter -> R.string.GrayScaleFilter
+                                is SepiaFilter -> R.string.SepiaFilter
+                                else -> throw Exception()
+                            }
+                        )
+                    )
+                }
             )
 
         }

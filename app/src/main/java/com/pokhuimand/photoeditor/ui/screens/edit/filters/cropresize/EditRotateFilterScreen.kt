@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.RotateFilterSettings
@@ -38,7 +40,7 @@ fun EditRotateFilterScreen(
         onBackPress = onBackPress,
         onDonePress = onDonePress,
         onCancelPress = onCancelPress,
-        title = { /*TODO*/ },
+        title = { Text(stringResource(R.string.RotationFilter)) },
         controlsContent = {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -93,7 +95,7 @@ fun EditRotateFilterScreen(
                         onFilterSettingsUpdate(filterSettings)
                     },
                     valueRange = RotateFilterSettings.Ranges.degrees,
-                    label = "Degrees",
+                    label = stringResource(R.string.Degrees),
                     valueFormat = { String.format("%.2f°", it) }
                 )
             }

@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.leinardi.android.speeddial.compose.SpeedDial
 import com.leinardi.android.speeddial.compose.SpeedDialOverlay
@@ -41,7 +42,7 @@ fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
             TopAppBar(
                 title = {
                     Text(
-                        "Photo Editor"
+                        stringResource(R.string.PhotoEditor)
                     )
                 },
             )
@@ -53,7 +54,7 @@ fun GalleryEmptyScreen(onImportPhoto: () -> Unit) {
                 .clickable { onImportPhoto() },
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Press anywhere to add photos")
+            Text(stringResource(R.string.PressAnywhere))
         }
     }
 }
@@ -79,7 +80,7 @@ fun GalleryPhotosScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Photo Editor"
+                        stringResource(R.string.PhotoEditor)
                     )
                 },
             )
@@ -87,7 +88,7 @@ fun GalleryPhotosScreen(
         floatingActionButton = {
             AnimatedContent(
                 targetState = uiState.toFabState(deviceHasCamera),
-                label = "main_view_fab"
+                label = stringResource(R.string.MainViewFab)
             ) {
                 when (it) {
                     is GalleryPhotosFabState.PhotosSelected -> FloatingActionButton(

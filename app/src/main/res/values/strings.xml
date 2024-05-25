@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Photo Editor</string>
+    <string name="Radius">Radius</string>
+    <string name="UMName">Unsharp Masking</string>
+    <string name="UMAmount">Amount</string>
+    <string name="UMThreshold">Threshold</string>
+    <string name="PressAnywhere">Press anywhere to add photos</string>
+    <string name="PhotoEditor">Photo Editor</string>
+    <string name="MainViewFab">main_view_fab</string>
+    <string name="Degrees">Degrees</string>
+    <string name="Original">Original</string>
+    <string name="RFName">Resize Filter</string>
+    <string name="New">New:</string>
+    <string name="Factor">Factor</string>
+    <string name="Temp">Temp</string>
+    <string name="Tint">Tint</string>
+    <string name="Sort">Sort:</string>
+    <string name="PSFilterName">Pixel Sorting</string>
+    <string name="MakingThreshold">Making Threshold</string>
+    <string name="BitDepth">Bit-depth</string>
+    <string name="Dithering">Dithering</string>
+    <string name="ErrorMultiplier">Error multiplier</string>
+    <string name="Contrast">Contrast</string>
+    <string name="Brightness">Brightness</string>
+    <string name="NothingFilter">Nothing Filter</string>
+    <string name="TempAndTintFilter">Temp and Tint</string>
+    <string name="RotationFilter">Rotation</string>
+    <string name="DumbFilter">Dumb Filter</string>
+    <string name="ContrastAndBrightnessFilter">Contrast and Brightness</string>
+    <string name="FaceRecognitionFilter">Face Recognition</string>
+    <string name="GrayScaleFilter">Gray Scale Filter</string>
+    <string name="SepiaFilter">Sepia Filter</string>
 </resources>

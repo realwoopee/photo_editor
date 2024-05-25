@@ -15,7 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.ResizeFilterSettings
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
@@ -40,7 +42,7 @@ fun EditResizeFilterScreen(
         onBackPress = onBackPress,
         onDonePress = onDonePress,
         onCancelPress = onCancelPress,
-        title = { /*TODO*/ },
+        title = { Text(stringResource(R.string.RFName)) },
         controlsContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -49,7 +51,7 @@ fun EditResizeFilterScreen(
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
             ) {
-                Text("Original:")
+                Text(stringResource(R.string.Original))
                 Text("${originalResolution.first}x${originalResolution.second}")
             }
             Row(
@@ -59,11 +61,11 @@ fun EditResizeFilterScreen(
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
             ) {
-                Text("New:")
+                Text(stringResource(R.string.New))
                 Text("${photoPreview.width}x${photoPreview.height}")
             }
             SliderWithLabelAndValue(
-                label = "Factor:",
+                label = stringResource(R.string.Factor),
                 value = filterSettings.coefficient,
                 onValueChange = { filterSettings = filterSettings.copy(coefficient = it) },
                 valueRange = ResizeFilterSettings.Ranges.coefficient,

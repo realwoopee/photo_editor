@@ -1,11 +1,14 @@
 package com.pokhuimand.photoeditor.ui.screens.edit.filters.colorcorrection
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.stringResource
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.components.SliderWithLabelAndValue
 import com.pokhuimand.photoeditor.filters.impl.colorcorrection.UnsharpMaskingFilterSettings
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
@@ -28,7 +31,7 @@ fun EditUnsharpMaskingFilterScreen(
         onBackPress = onBackPress,
         onDonePress = onDonePress,
         onCancelPress = onCancelPress,
-        title = { /*TODO*/ },
+        title = { Text(stringResource(R.string.UMName)) },
         controlsContent = {
             SliderWithLabelAndValue(
                 value = (filterSettings.amount).toFloat(),
@@ -40,7 +43,7 @@ fun EditUnsharpMaskingFilterScreen(
                     onFilterSettingsUpdate(filterSettings)
                 },
                 valueRange = UnsharpMaskingFilterSettings.Ranges.amount,
-                label = "Amount",
+                label = stringResource(R.string.UMAmount),
                 valueFormat = { String.format("%d%%", (it * 100).toInt()) }
             )
             SliderWithLabelAndValue(
@@ -53,7 +56,7 @@ fun EditUnsharpMaskingFilterScreen(
                     onFilterSettingsUpdate(filterSettings)
                 },
                 valueRange = UnsharpMaskingFilterSettings.Ranges.radius,
-                label = "Radius",
+                label = stringResource(R.string.Radius),
                 valueFormat = { String.format("%.2f", it) }
             )
             SliderWithLabelAndValue(
@@ -66,7 +69,7 @@ fun EditUnsharpMaskingFilterScreen(
                     onFilterSettingsUpdate(filterSettings)
                 },
                 valueRange = UnsharpMaskingFilterSettings.Ranges.threshold,
-                label = "Threshold",
+                label = stringResource(R.string.UMThreshold),
                 valueFormat = { it.toInt().toString() }
             )
         })

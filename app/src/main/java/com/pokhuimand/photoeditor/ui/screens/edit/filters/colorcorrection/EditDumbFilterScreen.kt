@@ -6,6 +6,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
 import android.graphics.Color
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
+import com.pokhuimand.photoeditor.R
 import com.pokhuimand.photoeditor.ui.screens.edit.filters.EditFilterScreenBase
 
 
@@ -15,7 +18,8 @@ fun EditDumbFilterScreen(
     isProcessingRunning: Boolean,
     onBackPress: () -> Unit,
     onDonePress: () -> Unit,
-    onCancelPress: () -> Unit
+    onCancelPress: () -> Unit,
+    title: @Composable () -> Unit
 ) {
     EditFilterScreenBase(
         photoPreview = photoPreview,
@@ -23,7 +27,7 @@ fun EditDumbFilterScreen(
         onBackPress = onBackPress,
         onDonePress = onDonePress,
         onCancelPress = onCancelPress,
-        title = { /*TODO*/ },
+        title = title,
         controlsContent = { })
 
 }
@@ -47,5 +51,5 @@ fun EditGrayscaleFilterScreenPreview() {
         photoPreview = bitmap,
         isProcessingRunning = false,
         onBackPress = { },
-        onDonePress = { }, onCancelPress = { })
+        onDonePress = { }, onCancelPress = { }, title = {})
 }
